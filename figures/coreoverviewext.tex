@@ -1,0 +1,45 @@
+
+% ------------------------------------------------------------------------------------------------------------------------------------------------------------ %
+\newcommand{\coreoverviewext}[1][]{% 1 optional parameter for options for the tikz picture
+\def\layersep{3cm}
+\begin{tikzpicture}[trim left=-5.5cm]
+
+\draw (0,0) node [rectangle,draw=black,minimum height=5cm, minimum width=3.5cm, text centered, rounded corners = 10pt] (A) {};
+\draw (1,-2) node [black, text centered] (C) {$\CalN_{\CalA_\CalP}$};
+\only<1>{
+\draw (0,0.9) node [gray, text centered] (C) {generate};
+\draw (0,0.3) node [gray, text centered] (C) {sequence of};
+\draw (0,-0.3) node [gray, text centered] (C) {candidate};
+\draw (0,-0.9) node [gray, text centered] (C) {exaplantions};
+} \only<2-> {
+\draw (0,0.9) node [black, text centered] (C) {$e \leftarrow \top.$};
+\draw (0,0.3) node [black, text centered] (C) {$e \leftarrow \bot.$};
+\draw (0,-0.3) node [black, text centered] (C) {$t \leftarrow \top.$};
+\draw (0,-0.9) node [black, text centered] (C) {$t \leftarrow \bot.$};
+}
+\draw (8,0) node [rectangle,draw=black,minimum height=5cm, minimum width=3.5cm, text centered,, rounded corners = 10pt] (P) {};
+\draw (9,-2) node [black, text centered] (C) {$\CalN_\CalP$};
+\only<1>{
+\draw (8,0.9) node [gray, text centered] (C) {};
+\draw (8,0.3) node [gray, text centered] (C) {is given candidate};
+\draw (8,-0.3) node [gray, text centered] (C) {an explanation?};
+\draw (8,-0.9) node [gray, text centered] (C) {};
+} \only<2-> {
+\draw (8,0.9) node [black, text centered] (C) {$\ell \leftarrow e \wedge ab_1.$};
+\draw (8,0.3) node [black, text centered] (C) {$\ell \leftarrow t \wedge ab_2.$};
+\draw (8,-0.3) node [black, text centered] (C) {$ab_1 \leftarrow \bot.\quad$};
+\draw (8,-0.9) node [black, text centered] (C) {$ab_2 \leftarrow \bot.\quad$};
+}
+
+\draw (14,-0.9) node [black, text centered] (C) {};
+
+%\draw (15,0) node [rectangle,draw=white,minimum height=3cm, minimum width=2cm, text centered,, rounded corners = 10pt] (O) {};
+
+\draw [black,->] (A) -- node [above] {\only<1,2>{candidate}\only<3>{$\emptyset$}\only<5>{$\{e\leftarrow\top\}$}\only<9>{$\{e\leftarrow\bot\}$}\only<11>{$\{t\leftarrow\top\}$}\only<15>{$\{t\leftarrow\bot\}$}\only<17>{$\{e\leftarrow\bot, t\leftarrow\bot\}$ / \textit{done}}} (P);
+\draw [->, black, rounded corners = 10pt]  (9.75,1) to (10.5,1) to (10.5, 3) to node [above] {\only<1,2,4,6,7,8,10,12,13,14,16>{request next candidate}}  (-2.5,3) to (-2.5,1) to (-1.75,1);
+%\draw [black,->] (S) -- node [above] {} (O);
+
+\draw [->, black, rounded corners = 10pt]  (9.75,-1) to (10.5,-1) to (10.5, -3) to node [below] {\only<1,2>{whether candidate was explanation}\only<6,7,8,12,13,14>{positive}\only<4,10,16>{negative}} (-2.5,-3) to (-2.5,-1) to (-1.75,-1);
+
+\end{tikzpicture}
+} 

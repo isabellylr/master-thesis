@@ -1,0 +1,24 @@
+
+% ------------------------------------------------------------------------------------------------------------------------------------------------------------ %
+\newcommand{\tape}[1][]{% 1 optional parameter for options for the tikz picture
+\begin{tikzpicture}
+\tikzstyle{every path}=[very thick]
+
+\edef\sizetape{0.7cm}
+\tikzstyle{tmtape}=[draw,minimum size=\sizetape]
+\tikzstyle{tmhead}=[arrow box,draw,minimum size=.8cm,arrow box
+arrows={east:.25cm, west:0.4cm}]
+
+%% Draw TM tape
+\begin{scope}[start chain=1 going right,node distance=-0.15mm]
+    \node [on chain=1,tmtape] {\only<3,4>{\color{brown}}{$\emptyset$}};
+    \node [on chain=1,tmtape] {\only<5-8>{\color{brown}}$\{e \leftarrow \top\}$};
+    \node [on chain=1,tmtape] {\only<9,10>{\color{brown}}$\{e \leftarrow \bot\}$};
+    \node [on chain=1,tmtape] {\only<11-14>{\color{brown}}$\{t \leftarrow \top\}$};
+    \node [on chain=1,tmtape] {\only<15,16>{\color{brown}}{$\{t \leftarrow\bot\}$}};
+    \node [on chain=1,tmtape] {\only<8-17>{\color{gray}}$\{\only<7>{\color{brown}}{e \leftarrow \top}\only<7>{\color{black}}, t\leftarrow \top\}$};
+    \node [on chain=1,tmtape] {\only<8-17>{\color{gray}}$\{\only<7>{\color{brown}}{e\leftarrow \top}\only<7>{\color{black}}, t \leftarrow \bot\}$};
+    \node [on chain=1,tmtape] {\only<14-17>{\color{gray}}$\{e\leftarrow\bot, \only<13>{\color{brown}}{t\leftarrow\top}\only<13>{\color{black}}{\}}$};
+    \node [on chain=1,tmtape] {\only<17>{\color{brown}}{$\{e\leftarrow \bot, t\leftarrow\bot\}$}};
+\end{scope}
+\end{tikzpicture}}

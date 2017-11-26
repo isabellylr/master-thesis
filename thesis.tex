@@ -1,0 +1,191 @@
+% **************************************************
+% Document Class Definition
+% **************************************************
+\documentclass[%
+	paper=A4,					% paper size --> A4 is default in Germany
+	twoside=true,				% onesite or twoside printing
+	openright,					% doublepage cleaning ends up right side
+	parskip=full,				% spacing value / method for paragraphs
+	chapterprefix=true,			% prefix for chapter marks
+	11pt,						% font size
+	headings=normal,			% size of headings
+	bibliography=totoc,			% include bib in toc
+	listof=totoc,				% include listof entries in toc
+	titlepage=on,				% own page for each title page
+	captions=tableabove,		% display table captions above the float env
+	draft=false,				% value for draft version
+]{scrreprt}%
+
+% **************************************************
+% Debug LaTeX Information
+% **************************************************
+%\listfiles
+
+% **************************************************
+% Information and Commands for Reuse
+% **************************************************
+\newcommand{\thesisTitle}{Bounded Sceptical Reasoning}
+\newcommand{\thesisName}{Isabelly Lourêdo Rocha}
+%\newcommand{\thesisSubject}{Human Reasoning}
+\newcommand{\thesisDate}{November 6th, 2017}
+%\newcommand{\thesisVersion}{Version 1}
+
+\newcommand{\thesisFirstReviewer}{Prof. Dr. Steffen Hölldobler}
+\newcommand{\thesisFirstReviewerUniversity}{\protect{Technische Universität Dresden, Germany}}
+\newcommand{\thesisFirstReviewerDepartment}{Department of Computer Science}
+
+\newcommand{\thesisSecondReviewer}{Prof. Dr. Sergio Tessaris}
+\newcommand{\thesisSecondReviewerUniversity}{\protect{Free University of Bolzano, Italy}}
+\newcommand{\thesisSecondReviewerDepartment}{KRDB Research Centre for Knowledge Representation}
+
+\newcommand{\thesisFirstSupervisor}{Prof. Dr. Steffen Hölldobler}
+
+\newcommand{\thesisUniversity}{\protect{Technische Universität Dresden}}
+\newcommand{\thesisUniversityDepartment}{Department of Computer Science}
+\newcommand{\thesisUniversityInstitute}{International Center for Computational Logic}
+\newcommand{\thesisUniversityGroup}{Knowledge Representation and Reasoning Group}
+\newcommand{\thesisUniversityCity}{Dresden}
+\newcommand{\thesisUniversityStreetAddress}{Nöthnitzer Strasse 46}
+\newcommand{\thesisUniversityPostalCode}{01187}
+\usepackage[list=true,listformat=simple]{subcaption}% FOR SUBTABLES
+\input{abbreviations}  % ABBREVIATIONS FILE
+% **************************************************
+% Load and Configure Packages
+% **************************************************
+\usepackage[utf8]{inputenc}		% defines file's character encoding
+\usepackage[english]{babel} % babel system, adjust the language of the content
+\usepackage[					% clean thesis style
+	figuresep=colon,%
+	sansserif=false,%
+	hangfigurecaption=false,%
+	hangsection=true,%
+	hangsubsection=true,%
+	colorize=full,%
+	colortheme=bluemagenta,%
+	bibsys=bibtex,%
+	bibfile=bib-refs,%
+	bibstyle=numeric,%
+]{cleanthesis}
+%\usepackage{algorithm2e}
+\usepackage{algorithmic}
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+\renewcommand{\algorithmicwhile}{\textbf{Function}}
+\renewcommand{\algorithmicendwhile}{\textbf{EndFunction}}
+\usepackage{booktabs}
+\usepackage{tikz} % FOR FIGURES
+\usetikzlibrary{decorations.markings} 
+\usetikzlibrary{snakes} 
+\usepackage{forest}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{tcolorbox}
+\usepackage{xpatch}
+\usepackage[nogroupskip,toc,acronym,style=long]{glossaries}
+\makeatletter
+\xpatchcmd{\proof}{\@addpunct{.}}{\@addpunct{:}}{}{}
+\makeatother
+\usetikzlibrary{shapes,positioning,arrows,backgrounds,fit,calc,automata}  
+\input{figures/networkAP}
+\input{figures/networkAPExtension}
+\input{figures/modcon}
+\input{figures/jordan}
+\input{figures/elman}
+\input{figures/simple_rnn}
+\input{figures/rn_types}
+\input{figures/candidates_tree}
+\input{figures/coreoverview}
+\hypersetup{					% setup the hyperref-package options
+	pdftitle={\thesisTitle},	% 	- title (PDF meta)
+	%pdfsubject={\thesisSubject},% 	- subject (PDF meta)
+	pdfauthor={\thesisName},	% 	- author (PDF meta)
+	plainpages=false,			% 	-
+	colorlinks=false,			% 	- colorize links?
+	pdfborder={0 0 0},			% 	-
+	breaklinks=true,			% 	- allow line break inside links
+	bookmarksnumbered=true,		%
+	bookmarksopen=true			%
+}
+\input{symbols}
+\makeglossaries
+\glsaddall
+% **************************************************
+% Document CONTENT
+% **************************************************
+\begin{document}
+
+% --------------------------
+% rename document parts
+% --------------------------
+%\renew
+%\renewcaptionname{ngerman}{\figurename}{Abb.}
+%\renewcaptionname{ngerman}{\tablename}{Tab.}
+%\renewcaptionname{english}{\figurename}{Fig.}
+%\renewcaptionname{english}{\tablename}{Tab.}
+\newtheorem{prop}{Proposition}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+\newtheorem{algorithm}{Algorithm}
+% --------------------------
+% Front matter
+% --------------------------
+\pagenumbering{roman}			% roman page numbing (invisible for empty page style)
+\pagestyle{empty}				% no header or footers
+\input{content/titlepages}		% INCLUDE: all titlepages
+\cleardoublepage
+
+\pagestyle{plain}				% display just page numbers
+\input{content/abstract}		% INCLUDE: the abstracts (english and german)
+\cleardoublepage
+%
+%\input{content/acknowledgement} % INCLUDE: acknowledgement
+\cleardoublepage
+%
+\setcounter{tocdepth}{2}		% define depth of toc
+\tableofcontents			% display table of contents
+\cleardoublepage
+
+% --------------------------
+% Body matter
+% --------------------------
+\pagenumbering{arabic}		% arabic page numbering
+\setcounter{page}{1}			% set page counter
+\pagestyle{maincontentstyle} 	% fancy header and footer
+
+\input{content/chapter-introduction} % INCLUDE: introduction
+\input{content/chapter-preliminaries} % INCLUDE: preliminaries
+\input{content/chapter-static}	% INCLUDE: connectionist networks
+\input{content/chapter-arbitrary}	% INCLUDE: RNN
+\input{content/chapter-experiments} % INCLUDE: exp
+\input{content/chapter-conclusion} % INCLUDE: conclusion
+% --------------------------
+% Back matter
+% --------------------------
+\cleardoublepage
+\addcontentsline{toc}{chapter}{\listtablename}
+\listoftables
+\cleardoublepage
+
+\addcontentsline{toc}{chapter}{\listfigurename}
+\setcounter{lofdepth}{2}
+\listoffigures
+\cleardoublepage
+
+\printglossary[nonumberlist,,title={List of Symbols}]
+\cleardoublepage
+
+{%
+\setstretch{1.1}
+\renewcommand{\bibfont}{\normalfont}
+\setlength{\biblabelsep}{5pt}
+\setlength{\bibitemsep}{0.5\baselineskip plus 0.5\baselineskip}
+\printbibliography[nottype=online]
+\printbibliography[heading=subbibliography,title={Webseiten},type=online,prefixnumbers={@}]
+}
+\cleardoublepage
+\input{content/declaration}
+\cleardoublepage
+% **************************************************
+% End of Document CONTENT
+% **************************************************
+\end{document}

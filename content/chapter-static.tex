@@ -1,0 +1,448 @@
+% !TEX root = ../thesis.tex
+
+\chapter{Generating a Static Sequence of Candidate Explanations}
+\label{sec:cn}
+
+In the introduction we have briefly discussed a method using connectionist networks to compute the sceptical consequences of a given program $\CalP$ and its respective set of abducibles $\CalA_\CalP$ by means of abduction, which was introduced in \cite{corepaper}. This chapter will focus on the component of this network responsible for generating the candidate explanations for $\CalA_\CalP$. In particular, this component is a McCulloch-Pitts network \cite{mcculloch1943logical} which sequentially generates all non-complementary candidate explanations in a static pre-defined sequence. After explaining how this has been done, we would like to improve this approach by extending the current version of this network such that it will now generate only minimal candidate explanations.
+
+\section{Non-Complementary Candidate Explanations}
+\label{sec:cn:ncce}
+
+Consider a program $\CalP$, its respective set of abducibles $\CalA_\CalP$, an observation $\CalO$ and an explanation $\CalE \subseteq \CalA_\CalP$ for $\CalO$ which contains a complementary pair of clauses, e.g. $c \leftarrow \top$ and $c \leftarrow \bot$. As it is stated in Proposition~\ref{prop:p0}, $\CalE'= \CalE \setminus \{c \leftarrow \bot\}$ is also an explanation for $\CalO$ and $\CalM_{\CalP \cup \CalE} = \CalM_{\CalP \cup \CalE'}$. From Proposition~\ref{prop:p0} we can then directly conclude that complementary explanations do not need to be considered. Because of this, we will start by focusing only on the generation of non-complementary candidate explanations.
+
+For a given a program $\CalP$ containing $n$ undefined atoms, the set of abducibles $\CalA_{\CalP}$ consists of $2n$ facts and assumptions. There are $3^{2n}$ candidate explanations and $3^n$ non-complementary candidate explanations for $\CalA_{\CalP}$. As mentioned before, we will focus on the non-complementary candidates only which is already a significant optimisation on the number of candidates. This is illustrated in Example~\ref{example:suppression} on page~\pageref{example:suppression}. These candidate explanations can be represented by means of n-bit binary vectors, where $n = |\CalA_{\CalP}|$ and each bit represents one of the $n$ atoms or literals in $\CalA_{\CalP}$. For example, each candidate explanation in $\CalC_{\CalA_{\CalP_{sup}}}$ can be represented by a 4-bit binary vector.
+
+\newpage
+\vspace*{\fill}
+\begin{tcolorbox}
+\begin{example}
+\label{example:suppression}
+\normalfont 
+Consider Byrne's suppression task discussed in the introduction. If we focus on the conditionals given Group II (Simple + Alternative), they can be represented by the program $\CalP_{sup}$ consisting of the following four clauses:
+\[
+\begin{array}{lcl}
+l & \leftarrow & e \wedge \neg ab_1. \\
+l & \leftarrow & t \wedge \neg ab_2. \\
+ab_1 & \leftarrow & \bot. \\
+ab_2 & \leftarrow & \bot.
+\end{array}
+\]
+Where the atoms $l$, $e$, and, $t$ stand for \textit{she sill study late in the library}, \textit{she has an essay to finish}, and \textit{she has a text book to read}, respectively. Moreover, the atoms $ab_1$ and $ab_2$ stand for the abnormalities.
+
+We can observe that only the atoms $e$ and $t$ are undefined. Thus, the set of abducibles~$\CalA_{\CalP_{sup}}$ consists of the following four facts and assumptions:
+\[
+\begin{array}{ccc}
+e \leftarrow \top. & \quad & e \leftarrow \bot. \\
+t \leftarrow \top. & \quad & t \leftarrow \bot.
+\end{array}
+\]
+There are eighty-one candidates explanations for $\CalA_{\CalP_{sup}}$, where nine of them are non-complementary. The set of non-complementary candidate explanations $\CalC_{\CalA_{\CalP_{sup}}}$ consists of the following nine candidates:
+\[
+\begin{array}{lcl}
+\CalC_0 = \emptyset, &\quad\quad& \\
+\CalC_1 = \{e \leftarrow \top\}, &\quad\quad& \CalC_2 = \{e \leftarrow \bot\}, \\
+\CalC_3 = \{t \leftarrow \top\}, &\quad\quad& \CalC_4 = \{t \leftarrow \bot\}, \\
+\CalC_5 = \{e \leftarrow \top, t \leftarrow \top\}, &\quad\quad& \CalC_6 = \{e \leftarrow \top, t \leftarrow \bot\}, \\
+\CalC_7 = \{e \leftarrow \bot, t \leftarrow \top\}, &\quad\quad&\CalC_8 = \{e \leftarrow \bot, t \leftarrow \bot\}. \\
+\end{array}
+\]
+\end{example}
+\end{tcolorbox}
+\vspace*{\fill}
+\newpage
+
+The candidate explanation
+\[
+\CalC_0 = \emptyset
+\]
+is represented by 0000, and the candidate explanation
+\[
+\CalC_1 = \{e \leftarrow \top\}
+\]
+is represented by 1000. Table~\ref{table:4bitsvector} shows the 4-bit representation for each of the nine non-complementary candidate explanations in $\CalC_{\CalA_{\CalP_1}}$. Given this, the goal is to construct a neural network which sequentially generates the binary vectors shown in Table~\ref{table:4bitsvector}.
+
+\begin{table}
+\centering
+\begin{tabular}{l|llll}
+Candidate Explanations & $e^\top$ & $e^\bot$ & $t^\top$ & $t^\bot$\\
+\hline
+$\emptyset$ & 0 & 0 & 0 & 0 \\
+$\{e \leftarrow \top \}$ & 1 & 0 & 0 & 0 \\
+$\{e \leftarrow \bot \}$ & 0 & 1 & 0 & 0 \\
+$\{t \leftarrow \top \}$ & 0 & 0 & 1 & 0 \\
+$\{t \leftarrow \bot \}$ & 0 & 0 & 0 & 1 \\
+$\{e \leftarrow \top,  t \leftarrow \top\}$ & 1 & 0 & 1 & 0 \\
+$\{e \leftarrow \top,  t \leftarrow \bot\}$ & 1 & 0 & 0 & 1 \\
+$\{e \leftarrow \bot,  t \leftarrow \top\}$ & 0 & 1 & 1 & 0 \\
+$\{e \leftarrow \bot,  t \leftarrow \bot\}$ & 0 & 1 & 0 & 1\\
+\end{tabular}
+\bigskip
+\caption{Binary vector definitions of the non-complementary candidate explanations for the set of abducibles $\CalA_{\CalP_1}$.}
+\label{table:4bitsvector}
+\end{table}
+
+We start by formally specifying a finite automaton with state output (Moore machine)~\cite{moore1956gedanken} as shown in Figure~\ref{fig:41} on page~\pageref{fig:41}. This automaton has the set $\{0,1\}$ of input symbols, the set $\{0000,0001,0010,0100,1000,0101,1001,0110,1010\}$ of output symbols, the set $\{q_0,q_1,q_2,q_3,q_4,q_5,q_6,q_7,q_8\}$ of states with $q_0$ being the initial state, the following transition function $\delta$ and the output function $\lambda$:
+\[
+\begin{array}{c|cccc|c}
+\delta & 0 & 1 &\quad\quad\quad\quad& state & \lambda\\ 
+\cline{0-2}  \cline{5-6}
+q_0 & q_0 & q_1 &\quad\quad\quad\quad& q_0 &0000\\
+q_1 & q_1 & q_2 &\quad\quad\quad\quad& q_1 &1000\\
+q_2 & q_2 & q_3 &\quad\quad\quad\quad& q_2 &0100\\
+q_3 & q_3 & q_4 &\quad\quad\quad\quad& q_3 &0010 \\
+q_4 & q_4 & q_5 &\quad\quad\quad\quad& q_4 &0001 \\
+q_5 & q_5 & q_6 &\quad\quad\quad\quad& q_5 &1010\\
+q_6 & q_6 & q_7 &\quad\quad\quad\quad&q_6 & 1001 \\
+q_7 & q_7 & q_8 &\quad\quad\quad\quad& q_7 &0110\\
+q_8 & q_8 & q_0 &\quad\quad\quad\quad&q_8 & 0101
+\end{array} 
+\]
+
+\begin{figure}[t]
+\begin{center}
+\scalebox{.75}{\begin{tikzpicture}[node distance = 20mm,initial text=,baseline=0mm]
+  \node[state with output,draw,initial](q0){$q_0$ \nodepart{lower} $0000$};
+  \node[state with output,draw](q1)[right of=q0]{$q_1$ \nodepart{lower} $1000$};
+  \node[state with output,draw](q2)[right of=q1]{$q_2$ \nodepart{lower} $0100$};
+  \node[state with output,draw](q3)[right of=q2]{$q_3$ \nodepart{lower} $0010$};
+  \node[state with output,draw](q4)[right of=q3]{$q_4$ \nodepart{lower} $0001$};
+  \node[state with output,draw](q5)[right of=q4]{$q_5$ \nodepart{lower} $1010$};
+  \node[state with output,draw](q6)[right of=q5]{$q_6$ \nodepart{lower} $1001$};
+  \node[state with output,draw](q7)[right of=q6]{$q_7$ \nodepart{lower} $0110$};
+  \node[state with output,draw](q8)[right of=q7]{$q_8$ \nodepart{lower} $0101$};
+
+  \path [->]  (q0) edge [loop above] node {$0$} ()
+            (q0) edge [bend left]  node[above] {$1$} (q1)
+            (q1) edge [loop above] node {$0$} ()
+            (q1) edge [bend left] node[above] {$1$} (q2)
+            (q2) edge [loop above] node {$0$} ()
+            (q2) edge [bend left] node[above] {$1$} (q3)
+            (q3) edge [loop above] node {$0$} ()
+            (q3) edge [bend left] node[above] {$1$} (q4)
+            (q4) edge [loop above] node {$0$} ()
+            (q4) edge [bend left] node[above] {$1$} (q5)
+            (q5) edge [loop above] node {$0$} ()
+            (q5) edge [bend left] node[above] {$1$} (q6)
+            (q6) edge [loop above] node {$0$} ()
+            (q6) edge [bend left] node[above] {$1$} (q7)
+            (q7) edge [loop above] node {$0$} ()
+            (q7) edge [bend left] node[above] {$1$} (q8)
+            (q8) edge [loop above] node {$0$} ()
+            (q8) edge [bend left] node[above] {$1$} (q0);
+\end{tikzpicture}}
+\end{center}
+\caption{\label{fig:41} A finite automaton generating all possible and non-complementary candidate explanations for $\CalA_{\CalP_2}$.}
+\end{figure}
+
+Warren McCulloch and Walter Pitts have shown in \cite{mcculloch1943logical} that each finite automaton with state output can be turned into a neural network of binary threshold units (sometimes called a \textit{McCulloch-Pitts network}) receiving an input via its input units and producing an output via its output units. In particular, a McCulloch-Pitts network to sequentially generate all the non-complementary candidate explanations for $\CalA_{\CalP_1}$ can be obtained from the finite automaton shown in Figure~\ref{fig:41}. 
+
+The network has one input unit \textit{next} triggering the state transitions; nine internal units, which are called the hidden units; five output units, consisting of $e^\top$, $e^\bot$, $t^\top$, $t^\bot$ and \textit{done}, representing the four elements in the the set of abducibles $\CalA_{\CalP_1}$ and whether all the candidate explanations have been generated. The output unit \textit{done} is active when the last candidate is generated, and passive, otherwise. The network $\CalN_{\CalA_{\CalP_1}}$ is shown in Figure~\ref{fig:networkAP} and more details on how it has been constructed can be found in \cite{corepaper}. 
+
+Note that, because our focus here is on the generation of candidate explanations, we only concentrate on one of the networks which compose the overall network described in \cite{corepaper}. The main goal of this network is to compute the sceptical abductive consequences for a given program $\CalP$ and observation $\CalO$.
+
+Among the other components of this overall network, there is a network denoted by $e\CalN_{\CalP}$ which encodes the given program $\CalP$ and computes the~$\Lfp \Phi_\CalP$. The network $e\CalN_{\CalP}$ has as input the output of the network $\CalN_{\CalA_{\CalP}}$, which is a given non-complementary candidate explanation $\CalC$ for the set of abducibles $\CalA_\CalP$. The network $e\CalN_{\CalP}$ uses this to compute the $\Lfp \Phi_{\CalP\cup\CalC}$ and its result is given as output of the network. 
+
+Once this network is done with the computation of $\Lfp \Phi_{\CalP\cup\CalC}$ and outputs the expected results, the overall network then requests a new candidate explanation by activating unit \textit{next} of the network $\CalN_{\CalA_{\CalP}}$ and the process is repeated until unit \textit{done} (\textit{done}) is active and there is no more candidate explanations to be considered. In this moment, there is another component of the network which considers all the outputs given by the network network $e\CalN_{\CalP}$ together with a given observation $\CalO$ and computes the sceptical consequences of it.
+
+Considering the behaviour of the overall network and because we know that the computation of $\Lfp \Phi_{\CalP\cup\CalC}$ is not done in a fixed number of time steps, it is clear that units \textit{next} and \textit{done} are crucial to assure communications among the several components as well as to make sure that the candidate explanations will be generated on demand.
+
+\begin{figure}[tp]
+\begin{center}
+\scalebox{1.0}{\NetworkAP}
+\end{center}
+\caption{McCulloch-Pitts network $\CalN_{\CalA_{\CalP_1}}$ designed to sequentially generate all the non-complementary candidate explanations for $\CalA_{\CalP_1}$.}
+\label{fig:networkAP}
+\end{figure}
+
+Initially, unit $q_0$ will be active and all other units passive. As soon as unit \textit{next} is externally activated, then unit $q_0$ will become passive and unit $q_1$ will become active. Moreover, unit $q_1$ will activate unit $e^\top$ representing the first non-complementary and non-empty candidate explanation
+\[
+\CalC_1 = \{ e \leftarrow \top\}.
+\] 
+Upon further external activation of unit \textit{next}, this process will continue until unit $q_8$ becomes active. Unit $q_8$ will activate units $e^\bot$ and $t^\bot$ representing the last candidate explanation to be considered 
+\[
+\CalC_8 = \{e \leftarrow \bot,\ t \leftarrow \bot\}.
+\]
+Another activation of unit \textit{next} will return the network into its initial state. Because the environment needs to know when all possible explanations have been generated, the output unit \textit{done} will also become active once unit $q_8$ becomes passive. Unit \textit{done} will remain active unless unit \textit{next} is externally activated again. 
+
+While the approach described here restricted the candidate explanations for a given set of abducibles to the non-complementary ones, it is well known that abduction often restricts this explanations to the minimal ones. Given this, we would like to introduce an extension of the current approach such that only the non-complementary and minimal candidate explanations are generated.
+
+\section{Minimal Candidate Explanations}
+\label{sec:cn:mce}
+
+As mentioned before, it is often the case that one is interested in reasoning w.r.t. the minimal explanations. Intuitively, minimal explanations are interesting in the sense that they are not too general and do not trivially imply the given observation. In other words, the minimality property prevents from over-restricting the models of the abductive explanations.
+
+From Proposition~\ref{prop:monotonicity} it directly follows that, for a given program $\CalP$, its respective set of abducibles $\CalA_\CalP$ and an observation $\CalO$, if $\CalE \subseteq \CalA_\CalP$ is an explanation for $\CalO$, i.e. $\CalP \cup \CalE \ModelsWCS \CalO$, then the explanation $\CalE$ with additional facts and assumptions is still an explanation for $\CalO$. This means that, when generating the non-complementary candidate explanations, we can avoid the generation of candidates which are a superset of those candidates known to have explained the given observation. In this way, no candidate $\CalC$ such that $\CalE \subseteq \CalC$ and $\CalP \cup \CalE \ModelsWCS \CalO$ should be generated.
+
+Thus, the goal now is to construct a network which will restrict the generation of non-complementary candidate explanations to the minimal ones. One way to archive this is by extending the network $\CalN_{\CalA_{\CalP_1}}$ shown in Figure~\ref{fig:networkAP}. For this purpose, reconsider the program $\CalP_{sub}$ from Example~\ref{example:suppression} on page~\pageref{example:suppression}. Because the minimal explanations are defined w.r.t. a given observation, let's consider a specific observation, e.g. \textit{she goes to the library},
+\[
+\CalO_1 = \{l\}.
+\]
+There are only two minimal explanations for $\CalO_1$ given $\CalP_1$, i.e. 
+\[
+\begin{array}{lcl}
+\CalE_1 & = & \{e \leftarrow \top\}, \\
+\CalE_2 & = & \{t \leftarrow \top\}. 
+\end{array}
+\]
+
+In this case, instead of sequentially generating all the nine binary vectors representing each of the non-complementary candidate explanations as it is done by the network $\CalN_{\CalA_{\CalP_1}}$, we would like to have a network which would avoid the generation of those binary vectors representing the candidate explanations which are supersets of candidates known to be explanations. The candidate explanations $\CalC_1$ and $\CalC_3$ are equal to the minimal explanations $\CalE_1$ and $\CalE_2$, respectively. Because of this, we know that they are explanations for the observation $\CalO_1$ and the extended network should not generate the candidate explanations
+\[
+\begin{array}{lclclcl}
+\CalC_5 &=& \{e \leftarrow \top, t \leftarrow \top\},\\
+\CalC_6 &=& \{e \leftarrow \top, t \leftarrow \bot\},\\
+\CalC_7 &=& \{e \leftarrow \bot, t \leftarrow \top\}, 
+\end{array}
+\]
+since $\CalC_1 \subseteq \CalC_5$, $\CalC_1 \subseteq \CalC_6$, $\CalC_3 \subseteq \CalC_5$, and $\CalE_3 \subseteq \CalC_7$. 
+
+This means that after generating the candidate explanation 
+\[\CalC_4 = \{t \leftarrow \bot\},
+\]
+the network is expected to avoid the generation of candidates which are a superset of already known explanations, which in this case are $\CalC_1$ and $\CalC_2$, and directly jump to the generation of the last candidate explanation
+\[
+\CalC_8 = \{e \leftarrow \bot, t \leftarrow \bot\}.
+\]
+Moreover, the network should then return to its initial state. Given this, the extended network is then expected to generate the following sequence of 4-bit binary vectors: 0000, 1000, 0100, 0010, 0001 and 0101.
+
+Now, in order to obtain the network $\CalN'_{\CalA_{\CalP_1}}$ which will be an extension of $\CalN_{\CalA_{\CalP_1}}$ such that the generation of candidate explanations is no longer restricted only to non-complementary, but also to the minimal ones, we will apply the following three steps:
+
+\begin{enumerate}
+\item Access the information of whether the last candidate explanation generated has indeed explained the given observation and keep it during the upcoming time steps until all the candidate explanations have been generated;
+\item For each candidate explanation, store the information of whether any other candidate explanation which is a subset of it has been in fact an explanation for the given observation;
+\item Use the information from step 2 to avoid the generation of non-minimal candidate explanations.
+\end{enumerate}
+
+The first modification can be done by simply adding a new input unit $e$ (\textit{explanation}), which will be externally activated when the last possible explanation generated was in fact an explanation for the given observation. This means that unit $e$ will be active when that is the case, and passive, otherwise. Unit $e$ also has a recurrent connection which is negatively modified by unit \textit{next}. With this we make sure that, once unit $e$ has been activated, it will remain active also during the following time steps where unit \textit{next} is passive and, on the next time step where unit \textit{next} is active again, $e$ just remains active if it is externally activated.
+
+Regarding the second step, the first candidate explanation to be generated
+\[
+\CalC_0 = \emptyset
+\]
+is a subset of all the other candidates. Because of this, we will add a connection from unit $q_0$ to unit \textit{done} which will be positively activated by units \textit{next} and $e$. This means that when the candidate $\CalC_0$ is an explanation for the given observation $\CalO$, no further candidate explanations will be generated and the network is done. Besides this, we also make the connection between $q_0$ and $q_1$ being positively modified by unit \textit{next} and negatively modified by unit $e$. Meaning that, for the case where~$\CalC_0$ is not an explanation for the given observation $\CalO$, the network will proceed as before and unit $q_1$ will be activated.
+
+For the candidate explanations with cardinality equal or greater than two, the second step will be done by adding a corresponding unit $h_i$ for each of this candidates. Each of these units will be passive when its respective possible explanation should be generated and active, otherwise. This will be done by connecting each unit $q_j$ responsible for generating a subset of a given set to its respective unit $h_i$. By doing this, a given unit $h_i$ will be active as soon as any of its subsets is known to be an explanation. 
+
+Another important point to be considered in the second step is that, once these units $h_i$ have been activated by one of units $q_i$, they need to remain active in the further time steps. This is important because the candidate explanations which are supersets of a given candidate explanation may not be generated directly after them, but in a few time steps later. Thus, this information should also be available in further time steps. 
+
+Besides this, since we're creating new units representing only the candidate explanations which have cardinality greater than one, this candidates have at least two non-empty subsets, but only one of them being an actual explanation is sufficient to keep this candidate explanation from being generated. Thus, once one of the subsets of the given candidate is an explanation, unit should be active and remain active independent of the other subsets being indeed explanations or not. 
+
+In practice, this can be done by simply adding a recurrent connection to each of these units. Each of this recurrent connections is negatively modified by unit \textit{done} such that they all become passive as soon as the last possible explanation has been generated.
+
+In our example, four units $h_5$, $h_6$, $h_7$ and $h_8$ will be added for each of its respective candidate explanation
+\[
+\begin{array}{ccc}
+\CalC_5 &=& \{e \leftarrow \top, t \leftarrow \top\},\\
+\CalC_6 &=& \{e \leftarrow \top, t \leftarrow \bot\}, \\
+\CalC_7 &=& \{e \leftarrow \bot, t \leftarrow \top\}, \\
+\CalC_8 &=& \{e \leftarrow \bot, t \leftarrow \bot\}.
+\end{array}
+\]
+Because units $q_1$ and $q_3$ are responsible for, respectively, generating the two candidate explanations 
+\[
+\begin{array}{ccc}
+\CalC_1 = \{e \leftarrow \top\}, \\
+\CalC_3 = \{t \leftarrow \top\}, \\
+\end{array}
+\]
+there will be a connection from units $q_1$ and $q_3$ to unit $h_5$, since both $\CalC_1$ and $\CalC_3$ are subsets of $\CalC_5$ which is represented by unit $h_5$. For analogous reasons, there will be connections from units $q_1$ and $q_4$ to unit $h_6$, from units $q_2$ and $q_3$ to unit $h_7$, and from units $q_2$ and $q_4$ to unit $h_8$. Besides this, the four units $h_5$, $h_6$, $h_7$ and $h_8$ will have a self connection negatively modified by unit \textit{done}.
+ 
+Finally, the third step regarding the fact that the network should be able to jump over the non-minimal possible explanations will be done in the following way. Each unit $q_i$ connected to a unit $q_{i+1}$ responsible for activating the generation of a possible explanation of cardinality greater than one will no longer be connected only to the next unit $q_{i+1}$, but to unit \textit{done} and to all units $q_j$ such that j = 0 or j > i. Besides this, we will make use of the $h_i$ units to positively or negatively modify each of these connections depending on the case. A connection from a unit $q_i$ to a unit $q_j$ will be positively modified by all units $h_k$ such that k < j, and negatively modified by unit $h_j$. Algorithm~\ref{alg:dependencies} shows the general steps for this modification, where PositiveConnection(a,b,c) and NegativeConnection(a,b,c) are used to express when a connection from unit a to unit b is positively and negatively modified by c, respectively.
+In our case, for example, unit $q_4$ will no longer be connected only to unit $q_5$, but to units $q_5$, $q_6$ $q_7$, $q_8$, $q_0$ and \textit{done}. Unit $q_5$ will now be connected to units $q_6$, $q_7$ $q_8$, $q_0$ and \textit{done}. And so on, until unit $q_7$ which will be connected to units $q_8$, $q_0$ and \textit{done}. In our example, the algorithm would use \textit{min} equals to five and max equals to eight. To illustrate how the algorithm works, let's consider the connections from unit $q_4$ and see how they would be modified by units $h_i$. 
+
+First of all, the connection from unit $q_4$ to unit $q_5$ will be negatively activated by unit $h_5$. This means that unit $h_5$ is passive when none of the following two candidate explanations are actual explanations for the observation~$\CalO$:
+\[
+\begin{array}{ccc}
+\CalC_1 &=& \{e \leftarrow \top\},\\
+\CalC_3 &=& \{t \leftarrow \top\}.
+\end{array}
+\]
+In that case, unit $q_5$ is activated and the next candidate explanation to be generated is, as before, 
+\[
+\CalC_5 = \{e \leftarrow \top, t \leftarrow \top\}.
+\]
+The connection from unit $q_4$ to unit $q_6$ is positively modified by unit $h_5$ and negatively modified by unit $h_6$. This means that unit $h_5$ is active when one of the candidate explanations $\CalC_1$ or $\CalC_2$ (or both) were actual explanations for the observation $\CalO$.
+
+\begin{tcolorbox}
+\begin{algorithm}
+\label{alg:dependencies}
+\normalfont 
+How to make the new connections between units $q_i$ and from them to unit \textit{done} be positively or negatively modified by units $h_i$.
+
+\begin{algorithmic}[1]
+\REQUIRE min = the smallest i from the $h_i$ units\\
+\hspace{0.5cm} max = the greatest i from the $h_i$ units
+\ENSURE Positive and negative modifications by units $h_i$ of the new connections between units $q_i$ and to unit \textit{done}
+\bigskip
+\WHILE {AddModifiers(min, max)}
+	\FOR{$i \in \{min-1,\dots,max-1\}$} 
+		\FOR {$j \in \{i+1,\dots,max\}$} 
+			\FOR {$k \in \{i+1,\dots,j-1\}$} 
+				\STATE PositiveConnection($q_i$, $q_j$,$h_k$)
+			\ENDFOR
+			\STATE NegativeConnection($q_i$, $q_j$,$h_j$)
+		\ENDFOR
+		\FOR {$j \in \{min,\dots,max\}$} 
+			\STATE PositiveConnection($q_i$, $q_0$,$h_j$) and PositiveConnection($q_i$, $d$,$h_j$)
+		\ENDFOR
+	\ENDFOR
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+\end{tcolorbox}
+
+Consequently, the next candidate explanation should no longer be $\CalC_5$. If that is case, since the connection from unit $q_4$ to unit $q_5$ is negatively modified by unit $h_5$, unit $q_5$ will indeed not be activated. Besides this, unit $q_6$ is activated when none of the following two candidate explanations are actual explanations for the observation~$\CalO$:
+\[
+\begin{array}{ccc}
+\CalC_1 &=& \{e \leftarrow \top\},\\
+\CalC_4 &=& \{t \leftarrow \bot\}.
+\end{array}
+\]
+If that is the case, the next candidate explanation to be generated is now
+\[
+\CalC_6 = \{e \leftarrow \top, t \leftarrow \bot\}.
+\]
+And so on, until the connections from unit $q_4$ to units $q_0$ and \textit{done}, which will be positively modified by units $h_5$, $h_6$, $h_7$ and $h_8$, meaning that when none of the remaining candidate explanations should be generated, i.e. all the four $h_i$ units are active, units \textit{done} and $q_0$ will be activated. Moreover, the activation of unit \textit{done} will deactivate units $h_i$ and the network is back to its initial state. The connections from unit $q_6$ to units $q_7$, $q_8$, $q_0$ and \textit{done}, from unit $q_7$ to units $q_8$, $q_0$ and \textit{done}, and from unit $q_8$ to units $q_0$ and \textit{done} will be positively or negatively modified by units $h_i$ following the same structure as explained above.
+
+The connection from unit $q_4$ to unit $q_6$ is positively modified by unit $h_5$ and negatively modified by unit $h_6$. This means that unit $h_5$ is active when one of the candidate explanations $\CalC_1$ or $\CalC_2$ (or both) were actual explanations for the observation $\CalO$. Consequently, the next candidate explanation should no longer be $\CalC_5$. If that is case, since the connection from unit $q_4$ to unit $q_5$ is negatively modified by unit $h_5$, unit $q_5$ will indeed not be activated. Besides this, unit $q_6$ is activated when none of the following two candidate explanations are actual explanations for the observation~$\CalO$:
+\[
+\begin{array}{ccc}
+\CalC_1 &=& \{e \leftarrow \top\},\\
+\CalC_4 &=& \{t \leftarrow \bot\}.
+\end{array}
+\]
+If that is the case, the next candidate explanation to be generated is now
+\[
+\CalC_6 = \{e \leftarrow \top, t \leftarrow \bot\}.
+\]
+And so on, until the connections from unit $q_4$ to units $q_0$ and \textit{done}, which will be positively modified by units $h_5$, $h_6$, $h_7$ and $h_8$, meaning that when none of the remaining candidate explanations should be generated, i.e. all the four $h_i$ units are active, units \textit{done} and $q_0$ will be activated. Moreover, the activation of unit \textit{done} will deactivate units $h_i$ and the network is back to its initial state. The connections from unit $q_6$ to units $q_7$, $q_8$, $q_0$ and \textit{done}, from unit $q_7$ to units $q_8$, $q_0$ and \textit{done}, and from unit $q_8$ to units $q_0$ and \textit{done} will be positively or negatively modified by units $h_i$ following the same structure as explained above.
+
+A fragment of the network $\CalN_{\CalA_{\CalP_1}}$ is shown in Figure~\ref{fig:networkAPExtension} with all the necessary modifications to extend this network such that it will only generate the minimal candidate explanations. In order to get the final version of the extended network $\CalN'_{\CalA_{\CalP_1}}$, one needs to overlap the network $\CalN_{\CalA_{\CalP_1}}$ with the extensions shown in Figure~\ref{fig:networkAPExtension}.
+
+So, after applying all the above described modifications to the network $\CalN_{\CalA_{\CalP_1}}$, we get the extended network $\CalN'_{\CalA_{\CalP_1}}$. The network $\CalN'_{\CalA_{\CalP_1}}$ has the same two input units \textit{done} and \textit{next} as before and an extra input unit $e$ (\textit{explanation}), which gives us the information whether the previous candidate was indeed an explanation. The hidden units now consist of units $q_i$ as before and the extra units $h_i$, which will be used to positively or negatively modify certain connections of the network. Units $h_i$ are the most important modification of the network and are the ones responsible for blocking non-minimal candidate explanations from being generated. The output units remain the same, i.e. five output units $e^\top$, $e^\bot$, $t^\top$, $t^\bot$ and \textit{done}. The connections between units $q_i$ and the output units $e^\top$, $e^\bot$, $t^\top$, $t^\bot$ also remain the same. The network $\CalN'_{\CalA_{\CalP_1}}$ generates all the minimal candidate explanations for the program $\CalP_1$ and a given observation $\CalO$.
+
+\begin{figure}
+\centering
+\scalebox{0.5}{\NetworkAPExtension}
+\caption{Fragment of the McCulloch-Pitts network from Figure~\ref{fig:networkAP} consisting of the necessary modifications to sequentially generate all the minimal candidate explanations for $\CalA_{\CalP_1}$.}
+\label{fig:networkAPExtension}
+\end{figure}
+
+Let's observe how the network $\CalN_{\CalA_{\CalP_1}}'$ behaves for the observation
+\[
+\CalO_1 = \{l\}.
+\]
+As before, unit $q_0$ will be initially active and all other units passive. As soon as unit \textit{next} is externally activated, then unit $q_0$ will become passive and unit $q_1$ will become active. Moreover, unit $q_1$ will activate unit $e^\top$ representing the first minimal and non-empty candidate explanation 
+\[
+\CalC_1 = \{ e \leftarrow \top\}.
+\]
+Because $\CalC_1$ is an explanation for the observation $\CalO_1$, the next time unit \textit{next} is activated, unit $e$ will also be activated. Thus, units $q_2$, $h_5$ and $h_6$ will become active and unit $q_1$ will become passive. Moreover, unit $q_2$ will activate unit $e^\bot$ representing the candidate explanation
+\[
+\CalC_2 = \{ e \leftarrow \bot\}.
+\]
+In the next activation of unit \textit{next}, because $\CalC_2$ is not an explanation for the observation~$\CalO_1$, unit $e$ will be passive. Unit $q_2$ will become passive, unit $q_3$ will become active and units $h_5$ and $h_6$ will remain active. Moreover, unit $q_3$ will activate unit $t^\top$ representing the candidate explanation
+\[
+\CalC_3 = \{ t \leftarrow \top\}.
+\]
+In the next activation of unit \textit{next}, because $\CalC_3$ is also an explanation for the observation $\CalO_1$, unit $e$ will also be activated. Unit $q_3$ will become passive, units $q_4$ and $h_7$ will become active, and units $h_5$ and $h_6$ will remain active. Moreover, unit $q_4$ will activate unit $t^\bot$ representing the candidate explanation
+\[
+\CalC_4 = \{ t \leftarrow \bot\}.
+\]
+In the next time unit \textit{next} is activated, because $\CalE_4$ is not an explanation for the observation $\CalO_1$, unit $e$ will be passive. Unit $q_4$ will become passive and units $h_5$, $h_6$ and $h_7$ will remain active. Because units $h_5$, $h_6$ and $h_7$ are active, but unit $h_8$ is passive, unit $q_4$ will activate unit $q_8$. Unit $q_8$ will activate units $e^\bot$ and $t^\bot$ representing the candidate explanation
+\[
+\CalC_8 = \{e \leftarrow \bot, t \leftarrow \bot\}.
+\]
+Finally, the next time unit \textit{next} is activated, because $\CalC_8$ is not an explanation for the observation $\CalO_1$, unit $e$ will be passive. Moreover, unit $q_8$ will activate units $q_0$ and \textit{done}, and unit $q_8$ will become passive. Because unit \textit{done} is active, all units $h_i$ which were active, e.g. $h_5$, $h_6$ and $h_7$, will become passive, returning the network to its initial state and informing the environment that all possible explanations have been generated. This steps are shown in Table~\ref{table:networkstate}.
+
+\begin{table}
+\resizebox{\textwidth}{!}{\begin{minipage}{\textwidth}
+\centering
+\begin{tabular}{c|c|c}
+Input & Hidden & Output\\ 
+\hline
+$t \ e$ & $q_0 \ q_1 \ q_2 \ q_3 \ q_4 \ q_5 \ q_6 \ q_7 \ q_8 \ h_5 \ h_6 \ h_7 \ h_8$ & $e^\top \ e^\bot \ t^\top \ t^\bot \ d$ \\
+\hline
+0 0 & 1 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 & 0 \ \  0 \ \  0 \ \  0 \ \ 0 \\
+1 0 & 0 \ 1 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 & 1 \ \  0 \ \  0 \ \  0 \ \ 0 \\
+1 1 & 0 \ 0 \ 1 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 1 \ 1 \ 0 \ 0 & 0 \ \  1 \ \  0 \ \  0 \ \ 0 \\
+1 0 & 0 \ 0 \ 0 \ 1 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 1 \ 1 \ 0 \ 0 & 0 \ \  0 \ \  1 \ \  0 \ \ 0 \\
+1 1 & 0 \ 0 \ 0 \ 0 \ 1 \ 0 \ 0 \ 0 \ 0 \ 0 \ 1 \ 1 \ 1 \ 0 & 0 \ \  0 \ \  0 \ \  1 \ \ 0 \\
+1 0 & 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 1 \ 1 \ 1 \ 1 \ 0 & 0 \ \  1 \ \  0 \ \  1 \ \ 1 \\
+\end{tabular}
+\bigskip
+\caption{State of the input, hidden and output units of the network $\CalN'_{\CalA_{\CalP_1}}$ for the observation $\CalO_1 = \{l\}$ on its initial state and on the activation of the input unit \textit{next} for five consecutive time steps.}
+\label{table:networkstate}
+\end{minipage} }
+\end{table}
+
+With this we have shown in details one possible way of extending the network $\CalN_{\CalA_{\CalP_1}}$ to a network $\CalN'_{\CalA_{\CalP_1}}$ which will only compute the minimal candidate explanations for the given program $\CalP_1$ and any given observation $\CalO$. We have also explained how the network $\CalN'_{\CalA_{\CalP_1}}$ behaves for the observation
+\[
+\CalO_1 = \{l\}.
+\]
+
+Although we have focused in the previous example, one should remember that the network here presented is a general approach for any given program $\CalP$ which has a respective set of abducibles of size four. Figure~\ref{fig:exptree} shows the different outcomes the network $\CalN'_{\CalA_{\CalP}}$ can provide depending on the given program $\CalP$ and observation~$\CalO$. We use dashed arrows to denote that the previous candidate explanations did not explain the given observation and solid arrows to denote the opposite. For example, in the example where we consider the program $\CalP_1$ and the observation $\CalO_1$, the network output corresponds to the following path:
+\[
+0000 \DashedArrow[->,densely dotted] 1000 \rightarrow 0100 \DashedArrow[->,densely dotted] 0010 \rightarrow 0001 \DashedArrow[->,densely dotted]  0101 \DashedArrow[->,densely dotted] done.
+\]
+
+\begin{figure}
+\scalebox{0.5}{ \candidatestree }
+\bigskip
+\caption{All the possible sequences of minimal candidate explanations for potential programs having a respective set of abducibles of size four taking into account potential arbitrary observations. Solid and dashed arrows denote positive and candidates, respectively. Wavy arrows denote the cases where both are possible.}
+\label{fig:exptree}
+\end{figure}
+
+Example~\ref{example:additional} on page~\pageref{example:additional} shows another example of a program with a corresponding set of abducibles of size four and how the same network could be reused. Moreover, a network for a given program $\CalP$ which has a correspondent set of abducibles of arbitrary size can be constructed following the same structure. The details on how this can be done is explained earlier in this section where we present Algorithm~\ref{alg:dependencies} on page~\pageref{alg:dependencies}.
+
+\newpage
+\vspace*{\fill}
+\begin{tcolorbox}
+\begin{example}
+\label{example:additional}
+\normalfont 
+Consider program $\CalP$ consisting of the following clauses:
+\[
+\begin{array}{lcl}
+a &\leftarrow& b \\
+a &\leftarrow& \neg b \\
+a &\leftarrow& c \\
+\end{array}
+\]
+The corresponding set of abducibles $\CalA_{\CalP_2}$ consists of the following four facts and assumptions:
+\[
+\begin{array}{ccc}
+b \leftarrow \top &\quad& b \leftarrow \bot \\
+c \leftarrow \top &\quad& c \leftarrow \bot \\
+\end{array}
+\]
+It is easy to see that the network would look the same, with the only difference that units before representing $e^\top$, $e^\bot$, $t^\top$ and $t^\bot$ now represent $b^\top$, $b^\bot$, $c^\top$ and~$c^\bot$, respectively. If we now consider the observation
+\[
+\CalO_2 = \{a\},
+\]
+as the minimal explanations for $\CalO_2$ given $\CalP_2$ are the following
+\[
+\begin{array}{lcl}
+\CalE_1 &=& \{b\}, \\
+\CalE_2 &=& \{\neg b\}, \\
+\CalE_3 &=& \{c\},
+\end{array}
+\]
+one can see that, in this case, the output of the network would correspond to the following path from the tree shown in Figure~\ref{fig:exptree}:
+\[
+0000 \DashedArrow[->,densely dotted] 1000 \rightarrow 0100 \rightarrow 0010 \rightarrow 0001 \DashedArrow[->,densely dotted] done.
+\]
+\end{example}
+\end{tcolorbox}
+\vspace*{\fill}
+\newpage
+
+\section{Conclusion}
+
+In this chapter we have focused on how to generate possible abductive explanations for a given program $\CalP$ and observation $\CalO$ using connectionist networks. First, we have looked into an approach to generate non-complementary explanations introduced in \cite{corepaper}. Then, we proposed a way to improve this approach by applying some modifications to it such that only minimal explanations are generated. Our new approach produces all possible explanations in a specific order such that minimal explanations can be detected and all non-minimal possible explanations can be discarded. This was a relevant improvement, since detecting minimality is not a trivial task, but it is still not the ideal solution to our problem for the following reasons.
+
+First, although a formal specification of how to construct and extend this network is provided, the construction of different networks may be required for different sets of abducibles. This is certainly not the most convenient solution to our problem and therefore we would like to come up with a more general approach.
+
+Besides this, we do not believe that humans test all possible explanations in a systematic way. It appears to us that in particular reasoning episodes some possible explanations are systematically tested whereas others are not considered at all. Our approach to generate the minimal candidate explanations already partially solves this problem in the sense that many unnecessary candidate explanations are discarded and, even for the same set of abducibles, the possible explanations vary depending on the given observation. However, the process of generating this possible explanations is still somehow done in a systematic way.
+
+Given that, we would like to have a more general approach not only in the sense that it should be flexible and work for different sets of abducibles, but also by generating as possible explanations only those which are more plausible to actually explain our observations.
+
+\label{sec:cn:conclusion}

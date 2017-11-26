@@ -1,0 +1,128 @@
+% !TEX root = ../thesis.tex
+% ------------------------------------------------------------------------------------------------------------------------------------------------------------ %
+\newcommand{\jordangeneral}[1][]{% 1 optional parameter for options for the tikz picture
+\def\layersep{3cm}
+\begin{tikzpicture}
+
+\draw (0,0) node [rectangle,draw=black,minimum height=1cm, minimum width=3cm, text centered] (I) {Input Layer};
+\draw (6,0) node [rectangle,draw=black,minimum height=1cm, minimum width=3cm, text centered] (C) {Context Layer};
+\draw (3,2.5) node [rectangle,draw=black,minimum height=1cm, minimum width=3cm, text centered] (H) {Hidden Layer};
+\draw (3,5) node [rectangle,draw=black,minimum height=1cm, minimum width=3cm, text centered] (O) {Output Layer};
+
+\draw [black,->] (I) -- (H);
+\draw [black,->] (C) -- (H);
+\draw [black,->] (H) -- (O);
+\draw [->,dashed, black, rounded corners = 10pt]  (O.north) to (3,6) to (8,6) to (8,-1) to (6,-1) to (6,-0.5);
+
+\end{tikzpicture}
+} 
+% ------------------------------------------------------------------------------------------------------------------------------------------------------------ %
+\newcommand{\jordannc}[1][]{% 1 optional parameter for options for the tikz picture
+\def\layersep{3cm}
+\begin{tikzpicture}[shorten >=1pt,->,draw=black, node distance=\layersep]
+	%\tikzstyle{every pin edge}=[<-,shorten <=1pt]
+	%\tikzstyle{neuron}=[circle,fill=black!25,minimum size=17pt,inner sep=0pt]
+	\tikzstyle{annot} = [text width=4em, text centered]
+	\tikzstyle{neuron}=[circle,draw=black,,minimum size=12pt,inner sep=0pt,text width=2em, text centered]    
+    
+	% Draw the input layer nodes
+	\node[neuron, label=left:$e^\top$] (I-1) at (0,-1) {};
+	\node[neuron, label=left:$e^\bot$] (I-2) at (0,-2) {};
+	\node[neuron, label=left:$t^\top$] (I-3) at (0,-3) {};
+	\node[neuron, label=left:$t^\bot$] (I-4) at (0,-4) {};
+	\node[neuron, label=left:$n$] (I-5) at (0,-5) {};
+    
+	% Draw the context layer nodes
+	\foreach \id in {1,...,5}
+		\node[neuron] (C-\id) at (0,-6-\id) {};
+		
+	% Draw the hidden layer nodes
+	\foreach \id in {1,...,5}
+		\node[neuron] (H-\id) at (\layersep,-3-\id) {};
+	
+	% Draw the output layer nodes
+	\node[neuron, label={[xshift=0.7cm, yshift=-0.2cm]$e^\top$}] (O-1) at (2*\layersep,-4) {};
+	\node[neuron, label={[xshift=0.7cm, yshift=-0.2cm]$e^\bot$}] (O-2) at (2*\layersep,-5) {};
+	\node[neuron, label={[xshift=0.7cm, yshift=-0.2cm]$t^\top$}] (O-3) at (2*\layersep,-6) {};
+	\node[neuron, label={[xshift=0.7cm, yshift=-0.2cm]$t^\bot$}] (O-4) at (2*\layersep,-7) {};
+	\node[neuron, label={[xshift=0.7cm, yshift=-0.2cm]$d$}] (O-5) at (2*\layersep,-8) {};
+
+	% Connect every node in the input and context layer with every node in the hidden layer.
+	\foreach \source in {1,...,5}
+		 \foreach \dest in {1,...,5} {
+           		\path (I-\source.east) edge (H-\dest.west);
+			\path (C-\source.east) edge (H-\dest.west);
+			\path (H-\source.east) edge (O-\dest.west);
+		}
+            
+	% Connect each node in the output layer with the context layer
+	\draw [->,dashed, black, rounded corners = 5pt] (6.4,-8) to (7,-8) to (7,-11.5) to (-0.8,-11.5) to (-0.8,-11) to (-0.4,-11);
+	\draw [->,dashed, black, rounded corners = 10pt] (6.4,-7) to (7.2,-7) to (7.2,-11.7) to (-1.0,-11.7) to (-1.0,-10) to (-0.4,-10);
+	\draw [->,dashed, black, rounded corners = 10pt] (6.4,-6) to (7.4,-6) to (7.4,-11.9) to (-1.2,-11.9) to (-1.2,-9) to (-0.4,-9);
+	\draw [->,dashed, black, rounded corners = 10pt] (6.4,-5) to (7.6,-5) to (7.6,-12.1) to (-1.4,-12.1) to (-1.4,-8) to (-0.4,-8);
+	\draw [->,dashed, black, rounded corners = 10pt] (6.4,-4) to (7.8,-4) to (7.8,-12.3) to (-1.6,-12.3) to (-1.6,-7) to (-0.4,-7);
+	
+	% Annotate the layers
+	\node[annot,above of=I-1, node distance=1cm] {Input layer};
+	\node[annot,above of=C-1, node distance=1cm] {Context layer};
+	\node[annot,above of=H-1, node distance=1cm] (hl) {Hidden layer};
+	\node[annot,above of=O-1, node distance=1cm] {Output layer};
+\end{tikzpicture}
+} 
+% ------------------------------------------------------------------------------------------------------------------------------------------------------------ %
+\newcommand{\jordanmin}[1][]{% 1 optional parameter for options for the tikz picture
+\def\layersep{3cm}
+\begin{tikzpicture}[shorten >=1pt,->,draw=black, node distance=\layersep]
+	%\tikzstyle{every pin edge}=[<-,shorten <=1pt]
+	%\tikzstyle{neuron}=[circle,fill=black!25,minimum size=17pt,inner sep=0pt]
+	\tikzstyle{annot} = [text width=4em, text centered]
+	\tikzstyle{neuron}=[circle,draw=black,,minimum size=12pt,inner sep=0pt,text width=2em, text centered]    
+    
+	% Draw the input layer nodes
+	\node[neuron, label=left:$e^\top$] (I-1) at (0,-1) {};
+	\node[neuron, label=left:$e^\bot$] (I-2) at (0,-2) {};
+	\node[neuron, label=left:$t^\top$] (I-3) at (0,-3) {};
+	\node[neuron, label=left:$t^\bot$] (I-4) at (0,-4) {};
+	\node[neuron, label=left:$n$] (I-5) at (0,-5) {};
+	\node[neuron, black, label=left:$e$] (I-6) at (0,-6) {};
+    
+	% Draw the context layer nodes
+	\foreach \id in {1,...,5}
+		\node[neuron] (C-\id) at (0,-7-\id) {};
+		
+	% Draw the hidden layer nodes
+	\foreach \id in {1,...,5}
+		\node[neuron] (H-\id) at (\layersep,-4-\id) {};
+	
+	% Draw the output layer nodes
+	\node[neuron, label={[xshift=0.7cm, yshift=-0.2cm]$e^\top$}] (O-1) at (2*\layersep,-4) {};
+	\node[neuron, label={[xshift=0.7cm, yshift=-0.2cm]$e^\bot$}] (O-2) at (2*\layersep,-5) {};
+	\node[neuron, label={[xshift=0.7cm, yshift=-0.2cm]$t^\top$}] (O-3) at (2*\layersep,-6) {};
+	\node[neuron, label={[xshift=0.7cm, yshift=-0.2cm]$t^\bot$}] (O-4) at (2*\layersep,-7) {};
+	\node[neuron, label={[xshift=0.7cm, yshift=-0.2cm]$d$}] (O-5) at (2*\layersep,-8) {};
+
+	% Connect every node in the input and context layer with every node in the hidden layer.
+	\foreach \source in {1,...,5} {
+		 \foreach \dest in {1,...,5} {
+           		\path (I-\source.east) edge (H-\dest.west);
+			\path (C-\source.east) edge (H-\dest.west);
+			\path (H-\source.east) edge (O-\dest.west);
+		}
+	}
+	\foreach \dest in {1,...,5} 
+           	\path [black] (I-6.east) edge (H-\dest.west);
+            
+	% Connect each node in the output layer with the context layer
+	\draw [->,dashed, black, rounded corners = 5pt] (6.4,-8) to (7,-8) to (7,-12.5) to (-0.8,-12.5) to (-0.8,-12) to (-0.4,-12);
+	\draw [->,dashed, black, rounded corners = 10pt] (6.4,-7) to (7.2,-7) to (7.2,-12.7) to (-1.0,-12.7) to (-1.0,-11) to (-0.4,-11);
+	\draw [->,dashed, black, rounded corners = 10pt] (6.4,-6) to (7.4,-6) to (7.4,-12.9) to (-1.2,-12.9) to (-1.2,-10) to (-0.4,-10);
+	\draw [->,dashed, black, rounded corners = 10pt] (6.4,-5) to (7.6,-5) to (7.6,-13.1) to (-1.4,-13.1) to (-1.4,-9) to (-0.4,-9);
+	\draw [->,dashed, black, rounded corners = 10pt] (6.4,-4) to (7.8,-4) to (7.8,-13.3) to (-1.6,-13.3) to (-1.6,-8) to (-0.4,-8);
+	
+	% Annotate the layers
+	\node[annot,above of=I-1, node distance=1cm] {Input layer};
+	\node[annot,above of=C-1, node distance=1cm] {Context layer};
+	\node[annot,above of=H-1, node distance=1cm] (hl) {Hidden layer};
+	\node[annot,above of=O-1, node distance=1cm] {Output layer};
+\end{tikzpicture}
+} 

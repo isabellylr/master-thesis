@@ -1,0 +1,21 @@
+% !TEX root = ../thesis.tex
+% ------------------------------------------------------------------------------------------------------------------------------------------------------------ %
+\newcommand{\coreoverview}[1][]{% 1 optional parameter for options for the tikz picture
+\def\layersep{3cm}
+\begin{tikzpicture}
+
+\draw (0,0) node [rectangle,draw=black,minimum height=4cm, minimum width=2cm, text centered, rounded corners = 10pt] (A) {};
+\draw (0,-1) node [black, text centered] (C) {$\CalN_{\CalA_{\CalP}}$};
+\draw (5,0) node [rectangle,draw=black,minimum height=4cm, minimum width=2cm, text centered,, rounded corners = 10pt] (P) {};
+\draw (5,-1) node [black, text centered] (C) {$e\CalN_{\CalA_{\CalP}}$};
+\draw (10,0) node [rectangle,draw=black,minimum height=4cm, minimum width=2cm, text centered,, rounded corners = 10pt] (S) {};
+\draw (10,-1) node [black, text centered] (C) {$\CalN_\CalS$};
+
+\draw [black,->] (A) -- node [above] {\textit{candidate}} (P);
+
+\draw [->, black, rounded corners = 10pt]  (6,1) to (7,1) to (7, 3) to node [above] {\textit{request for next candidate}}  (-2,3) to (-2,1) to (-1,1);
+\draw [black,->] (P) -- node [above] {\textit{consequences}} (S);
+%\draw [->, black, rounded corners = 10pt]  (6,-1) to (7,-1) to (7, -3) to node [below] {whether candidate was positive} (-2,-3) to (-2,-1) to (-1,-1);
+
+\end{tikzpicture}
+} 

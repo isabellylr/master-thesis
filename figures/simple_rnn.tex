@@ -1,0 +1,18 @@
+% !TEX root = ../thesis.tex
+
+\newcommand{\simplernn}[1][]{% 1 optional parameter for options for the tikz picture
+\def\layersep{3cm}
+\begin{tikzpicture}[shorten >=1pt,->,draw=black, node distance=\layersep]
+	\tikzstyle{neuron}=[circle,draw=black,,minimum size=12pt,inner sep=0pt,text width=3em, text centered]    
+    
+	% Draw the nodes
+	\node[neuron, label=left:$x_2$] (N-1) at (0,0) {};
+	\node[neuron, label=left:$x_1$] (N-2) at (0,-3) {};
+	\node[gray,, label=left:$\mu$] (N) at (1.5,0) {};
+	
+	% Connect the nodes 
+	\draw[,->] (N-2) -- (N-1) {} node[midway,sloped,right,rotate=270] {$w_{21}$};
+	\draw[,->] (N-1) -- (0,3) {};
+	\draw [black,dashed]  (N-1.north) to[out=20,in=-50,looseness=3.2]  (N-1.south) {};
+\end{tikzpicture}
+} 

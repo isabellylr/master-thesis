@@ -1,0 +1,379 @@
+\documentclass[10pt]{beamer}
+
+\usetheme[progressbar=frametitle]{metropolis}
+\usepackage{appendixnumberbeamer}
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+\usepackage{color}
+\usepackage{pgfplots}
+\usepgfplotslibrary{dateplot}
+\usetikzlibrary{snakes} 
+\usepackage{xspace}
+\usetikzlibrary{chains,fit,shapes}
+\newcommand{\themename}{\textbf{\textsc{metropolis}}\xspace}
+
+\input{abbreviations}
+\input{figures/coreoverviewex}
+\input{figures/coreoverviewext}
+\input{figures/coreoverviewcandidates}
+\input{figures/elman}
+\input{figures/jordan}
+\input{figures/tape}
+\input{figures/candidates_tree}
+\title{Bounded Skeptical Reasoning}
+%\subtitle{Human Reasoning}
+\date{\today}
+\date{}
+\author{Isabelly Lour\^{e}do Rocha}
+%\institute{Technische Universit\"{a}t Dresden}
+%\titlegraphic{\hfill\includegraphics[height=1.5cm]{figures/logo.jpg}}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}{Table of contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+\section{Introduction}
+%----------------------------------------------------------------------------------------------------------%
+\begin{frame}[fragile]{Abductive Sceptical Reasoning}
+
+\uncover<1->{\textbf{Byrne's suppression task}} \\\vspace*{-1mm}
+\color{gray}{\tiny Ruth MJ Byrne. Suppressing valid inferences with conditionals. In: Cognition. (1989)}
+
+\uncover<2->{\textit{\color{black}{If she has an essay to write, then she will study late in the library.\\}}}
+\uncover<3->{\textit{\color{black}{If she has a textbook to read, then she will study late in the library.}}}
+
+\begin{itemize}
+\uncover<4->{\item \textbf{Observation}: She will study late in the library}
+\uncover<5->{\item Does it follow that \textit{she has an essay to write}?}
+\uncover<6->{\item \textbf{Explanations}: 
+	\begin{itemize}
+		\uncover<7->{\item She has an essay to write}
+		\uncover<8->{\item She has a textbook to read}
+	\end{itemize}
+}
+\end{itemize}
+
+\uncover<9->{\color{black}{\textbf{Wason's selection task}}\\\vspace*{-1mm}
+\color{gray}{\tiny Peter C Wason. Reasoning about a rule. In: The Quarterly journal of experimental psychology. (1968)}}\\
+\uncover<10->{\color{black}{\textbf{Syllogistic reasoning}}\\\vspace*{-1mm}
+\color{gray}{\tiny Ana Oliveira da Costa, Emmanuelle-Anna Dietz Saldanha, Steffen H\"{o}lldobler, and Marco Ragni. }\\\vspace*{-2mm}
+{\tiny A computational logic approach to human syllogistic reasoning. In: Conference of the Cognitive Science Society (2017)}}
+
+\end{frame}
+%----------------------------------------------------------------------------------------------------------%
+\section{Sceptical Reasoning Framework}
+%----------------------------------------------------------------------------------------------------------%
+\begin{frame}{Computing Abductive Sceptical Consequences}
+
+\begin{block}
+{\tiny \color{gray}{Emmanuelle-Anna Dietz Saldanha, Steffen H\"{o}lldobler, Carroline Dewi Puspa Kencana Ramli, and Luis Palacios Medinacelli. \\
+A Core Method for the Weak Completion Semantics with Skeptical Abduction. In: JAIR (accepted). (2017)}}
+\end{block}
+
+\begin{itemize}
+	\uncover<2->{\item \textbf{Observation}: She will study late in the library ($\ell$)}
+\end{itemize}
+
+\begin{figure}
+\scalebox{0.6}{\coreoverviewex}
+\label{fig:coreoverview}
+\end{figure}
+
+\end{frame}
+%----------------------------------------------------------------------------------------------------------%
+\begin{frame}{Candidate Explanations' Exponential Growth}
+
+  \begin{figure}
+    \begin{tikzpicture}
+      \begin{axis}[
+        mlineplot,
+        xlabel={\# Undefined Atoms},
+        ylabel={\# Candidate Explanations},
+        width=0.9\textwidth,
+        height=6cm,
+        xtick={1,...,5},
+      ]
+      \addplot plot coordinates {(1, 3) (2, 9) (3, 27) (4, 81) (5, 243)};
+      \end{axis}
+    \end{tikzpicture}
+  \end{figure}
+
+\end{frame}
+%----------------------------------------------------------------------------------------------------------%
+\section{Generating Candidate Explanations}
+%----------------------------------------------------------------------------------------------------------%
+\begin{frame}{Current Approach}
+\begin{itemize}
+\uncover<1->{\item \color{black}{McCulloch Pitts network} \\\vspace*{-1mm}
+\color{gray}{\tiny Warren S McCulloch and Walter Pitts. A logical calculus of the ideas immanent in nervous activity.}\\\vspace*{-2mm}
+{\tiny In: The bulletin of mathematical biophysics. (1943)}}
+\uncover<2->{\item \color{black} Generates static pre-defined sequence}
+\uncover<3->{\item Restricts candidate explanations to \textit{non-complementary}}
+	\begin{itemize}
+		\uncover<4->{\item Complementary candidate}
+
+			\uncover<5->{ $e \leftarrow \top, e \leftarrow \bot$}\\
+			\uncover<6->{ $e \leftarrow \top \vee \bot$}\\
+			\uncover<7->{ $e \leftarrow \top$}\\
+
+	\end{itemize}
+\end{itemize}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------%
+\begin{frame}{Minimal Candidate Explanations}
+\begin{itemize}
+\uncover<1->{\item \textbf{Motivation}: Explanations are monotonic}
+\uncover<2->{\item \textbf{Definition}: Candidate explanation $\CalC$ is \textit{minimal} if it does not exist $\CalC' \subset \CalC$, such that
+	\begin{itemize}
+		\item $\CalC' \cup \CalP \ModelsWCS \CalO$
+	\end{itemize}
+}\uncover<3->{
+\item \textbf{Consequence}: Cardinality constraint to the sequence of candidates }
+\uncover<4->{
+\item \textbf{How to do}}
+	\begin{itemize}
+		\uncover<5->{\item Feed back the information whether a candidate was an explanation}
+		\uncover<6->{\item Store and use this information to block the generation of candidates which are supersets of known explanations}
+	\end{itemize}
+\end{itemize}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------%
+\begin{frame}{Minimal Candidate Explanations}
+
+\uncover<2->{
+\textbf{Observation}: She will study late in the library ($\ell$)
+
+\vspace*{0.1cm}
+\begin{figure}
+\scalebox{0.6}{\tape}
+\end{figure}
+}
+\begin{figure}
+\begin{centering}
+\scalebox{0.6}{\coreoverviewext}
+\end{centering}
+\end{figure}
+
+\end{frame}
+%----------------------------------------------------------------------------------------------------------%
+\begin{frame}{Minimal Candidate Explanations}
+\uncover<1->{Cognitive adequacy\\\vspace*{1mm}
+\color{gray}{\tiny Gerhard Strube. The role of cognitive science in knowledge engineering.\\\vspace*{-2mm}
+In: Contemporary knowledge engineering and cognition. Springer, 1992.}}
+
+\begin{itemize}
+\uncover<2->{\item Many different possible orderings}
+\begin{itemize}
+\uncover<3->{\item No minimality \\
+$n!$, $n$ is the number of candidate explanations }\\
+\uncover<4->{\textbf{2 undefined atoms}: $9! = 362.880$
+}\uncover<5->{
+\item With minimality \\
+$\displaystyle \prod_{i = 0}^{k} c_i!$, $c_i$ is the number of candidates with cardinality $i$ \\}
+\uncover<6->{\textbf{2 undefined atoms}: $1! * 4 !* 4! = 576$
+}
+\end{itemize}
+\end{itemize}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------%
+\section{Recurrent Networks}
+%----------------------------------------------------------------------------------------------------------%
+\begin{frame}{Recurrent Network}
+\begin{itemize}
+\uncover<1->{\item Designed to learn sequential or time-varying sequences
+} \uncover<2->{\item Internal memory to maintain previous state
+} \uncover<3->{\item Several applications
+\begin{itemize}
+	} \uncover<4->{\item Pattern recognition
+	} \uncover<5->{\item Language processing
+\end{itemize}
+} \uncover<6->{\item Two fundamental types
+\begin{itemize}
+} \uncover<7->{\item Jordan networks \\\vspace*{-1mm}
+\color{gray}{\tiny Michael I Jordan. Serial order: A parallel distributed processing approach. (1997)}
+} \uncover<8->{\item\color{black}{Elman networks}\\\vspace*{-1mm}
+\color{gray}{\tiny Jeffrey L Elman. Representation and structure in connectionist models. (1989)}
+}
+\end{itemize}
+\end{itemize}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------%
+\begin{frame}{Jordan Networks}
+\begin{figure}
+\scalebox{0.6}{\jordangeneral}
+\label{fig:coreoverview}
+\end{figure}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------%
+\begin{frame}{Elman Networks}
+\begin{figure}
+\scalebox{0.6}{\elmangeneral}
+\label{fig:coreoverview}
+\end{figure}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------%
+\begin{frame}{Generating Arbitrary Sequences}
+\begin{figure}
+\scalebox{0.5}{\elmanmin}
+\label{fig:coreoverview}
+\end{figure}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------%
+\begin{frame}{Generating Arbitrary Sequences}
+\begin{itemize}
+\uncover<1->{\item Training and testing data
+	\begin{itemize}
+	} \uncover<2->{\item Random activation of unit \textit{next} ($n$)
+	} \uncover<3->{\item Random activation of unit \textit{explanation} ($e$)
+	\end{itemize}
+} \uncover<4->{\item Supervised learning
+} \uncover<5->{\[
+\mbox{expected output } = 
+\begin{cases}
+	\text{next candidate}, 	& \text{if unit \textit{next} is active }\\
+	\text{current candidate},	& \text{otherwise}
+\end{cases}
+\]
+} \uncover<6->{\item \textbf{Training}: Back-propagation 
+} \uncover<7->{\item \textbf{Testing}: Mean absolute error
+} \uncover<8->{\item 10-fold cross validation}
+\end{itemize}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------%
+\begin{frame}{Generating Arbitrary Sequences}
+\begin{itemize}
+\uncover<1->{\item What is the ideal number of hidden units?}
+	\begin{itemize}
+	\uncover<2->{\item \textbf{Too few}: underfitting }
+	\uncover<3->{\item \textbf{Too many}: overfitting}
+	\end{itemize}
+\end{itemize}
+\uncover<4->{    \begin{figure}
+    \scalebox{0.6}{
+    \begin{tikzpicture}
+      \begin{axis}[
+        mlineplot,
+        xlabel={\# Hidden Units},
+        ylabel={Mean Absolute Error},
+        width=0.9\textwidth,
+        height=6cm,
+        xtick={1,...,10},
+      ]
+      \addplot plot coordinates {(1, 0.2893350) (2, 0.2893350) (3, 0.2893350) (4, 0.3183645) (5, 0.2893350) (6, 0.2893350) (7, 0.2804612) (8, 0.2117288) (9, 0.0000000) (10, 0.0000000)};      
+       \addplot plot coordinates {(1, 0.2893350) (2, 0.2893350) (3, 0.2893350) (4, 0.2893350) (5, 0.2893350) (6, 0.2780525) (7, 0.2448220) (8, 0.2280523) (9, 0.0000000) (10, 0.0000000)};
+       \legend{Elman, Jordan}
+      \end{axis}
+    \end{tikzpicture}
+    
+    }
+    \end{figure}}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------%
+\begin{frame}{Generating Arbitrary Sequences}
+    \begin{figure}
+    \begin{tikzpicture}
+      \begin{axis}[
+        legend style={at={(1,0)},anchor=south east},
+        mlineplot,
+        xlabel={\# Abducibles},
+        ylabel={Optimal \# Hidden Units},
+        width=0.9\textwidth,
+        height=6cm,
+        xtick={2,4,6},
+      ]
+       \legend  {Elman, Jordan}
+      \addplot plot coordinates {(2, 4) (4, 9) (6, 13)};      
+       \addplot plot coordinates {(2, 4) (4, 9) (6, 14)};
+       
+      \end{axis}
+    \end{tikzpicture}
+  \end{figure}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------%
+\begin{frame}{Generating Arbitrary Sequences}
+\begin{itemize}
+\uncover<1->{\item Advantages of new approach}
+\begin{itemize}
+	\uncover<2->{\item Results can be generalised}
+		\begin{itemize}
+		\uncover<3->{\item Any set of abducibles}
+		\uncover<4->{\item Different sequence orderings}
+		\end{itemize}
+	\uncover<5->{\item Learning}
+	\uncover<6->{\item Anytime behaviour}
+\uncover<7->{\item Automatisation}
+	\begin{itemize}
+		\uncover<8->{\item Generation of data}
+		\uncover<9->{\item Training and testing via k-fold cross-validation}
+		\uncover<10->{\item Plot of the experiment outcome}
+	\end{itemize}
+\uncover<11->{\item Facility to test variations of the problem}
+\end{itemize}
+\end{itemize}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------%
+\section{Psychological Experiments}
+%----------------------------------------------------------------------------------------------------------%
+\begin{frame}{Psychological Experiments}
+\begin{itemize}
+\uncover<1->{\item \textbf{Hypothesis:} Only minimal candidate explanations are considered}
+\begin{itemize}
+\uncover<2->{\item \textbf{Observation}: She will study late in the library}
+\uncover<3->{\item \textbf{Explanations}: 
+	\begin{itemize}
+		\uncover<4->{\item \only<12>\textbf{She has an essay to write}}
+		\uncover<5->{\item \only<12>\textbf{She has a textbook to read}}
+		\uncover<6->{\item \only<9>\textbf{She has an essay to write and a textbook to read}}
+	\end{itemize}
+}
+\uncover<7->{\item Does it follow that \textit{she has an essay to write}?}
+	\begin{itemize}
+		\uncover<8->{\item No minimality}\uncover<10->{: $\approx$100\% yes}
+		\uncover<11->{\item Minimality}\uncover<13->{: $\approx$50\% yes}
+	\end{itemize}
+\end{itemize}
+\end{itemize}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------%
+\begin{frame}{Open Questions}
+\begin{itemize}
+\uncover<1->{\item Do humans consider only basic explanations?}
+\uncover<2->{\item Are the candidate explanations sequentially generated?}
+\uncover<3->{\item Are complementary candidates not considered? }
+\uncover<4->{\item Do humans generate all the candidates?}
+\uncover<5->{\item If a bound is applied, how is this bound characterised? }
+\end{itemize}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------%
+\section{Contributions}
+%----------------------------------------------------------------------------------------------------------%
+\begin{frame}{Contributions}
+\begin{itemize}
+\uncover<2->{ \item Optimisation of sceptical abduction
+	\begin{itemize}
+	} \uncover<3->{ \item Reducing number of candidate explanations generated
+	} \uncover<4->{ \item Minimality constraint
+	\end{itemize}
+} \uncover<5->{ \item Elman or Jordan network }
+	\begin{itemize}
+	\uncover<6->{ \item Learning arbitrary sequences of candidate explanations}
+	\end{itemize}
+\uncover<7->{ \item Bounded reasoning}
+	\begin{itemize}
+	\uncover<8->{ \item Anytime behaviour}
+	\end{itemize}
+\end{itemize}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------%
+{
+\begin{frame}[standout]
+  Thank you!
+\end{frame}
+}
+\end{document}
+

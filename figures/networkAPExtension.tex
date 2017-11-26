@@ -1,0 +1,197 @@
+% !TEX root = ../thesis.tex
+
+\newcommand{\NetworkAPExtension}[1][]{% 1 optional parameter for options for the tikz picture
+
+\begin{tikzpicture}[trim left=-15cm]%[shorten >=1pt,->,draw=black!50, node distance=\layersep]
+
+\tikzstyle{annot} = [text width=4em, text centered]
+\tikzstyle{neuron}=[circle,draw=black,,minimum size=12pt,inner sep=0pt,text width=2em, text centered]     
+
+%%% Nodes %%%
+\node[neuron] (D) at (-4,3) {$d$};
+\node[neuron] (T) at (-1,3) {$n$};
+\node[neuron] (E) at (2,3) {$e$};
+\path[] (E) edge [loop left,thick] node {} (E);
+
+\foreach \id in {0,...,4}
+	\node[neuron] (Q-\id) at (-8,-4*\id) {$q_\id$};
+
+\foreach \id in {5,...,8} {
+	\pgfmathtruncatemacro\y{\id-4};
+	\node[neuron] (Q-\id) at (4*\id-24,-4*\id) {$q_\id$};
+	\node[neuron] (H-\id) at (8,-4*\y) {$h_\id$};
+	\path[] (H-\id) edge [loop above,thick] node {} (H-\id);
+}
+
+%%% Connections %%%
+\foreach \id in {0,...,3} {
+	\pgfmathtruncatemacro\y{\id+1};
+	\draw [black, ->]  (Q-\id.south) to (Q-\y.north);
+}
+
+\foreach \i in {4,...,7} {
+	\pgfmathtruncatemacro\k{\i+1};
+	\foreach \j in {\k,...,8} {
+		\pgfmathtruncatemacro\y{-4*\i};
+		\draw plot [smooth, tension=0.6,->] coordinates { (4*\i-24,\y-0.4) (4*\i-22,-4*\j)  (4*\j-24.4,-4*\j)};
+	}
+}
+
+\draw plot [smooth, tension=0.6,->] coordinates {  (-8,0.4) (-7.6,2.5) (-4.4,3)};
+
+\draw [->, black, rounded corners = 10pt] (-4,3.4) to (-4,4) to (7,4) to (7,-3.3) to (7.8,-3.3);
+\fill (7.8,-3.3) circle (2pt);
+\draw [->, black, rounded corners = 10pt] (-4,3.4) to (-4,4) to (7,4) to (7,-7.3) to (7.8,-7.3);
+%\draw plot [smooth, tension=0.4,->] coordinates {  (-4,3.4) (-3,5) (6,4) (7,-6) (7.8,-7.3)};
+\fill (7.8,-7.3) circle (2pt);
+\draw [->, black, rounded corners = 10pt] (-4,3.4) to (-4,4) to (7,4) to (7,-11.3) to (7.8,-11.3);
+%\draw plot [smooth, tension=0.4,->] coordinates {  (-4,3.4) (-3,5) (6,4) (7,-10) (7.8,-11.3)};
+\fill (7.8,-11.3) circle (2pt);
+\draw [->, black, rounded corners = 10pt] (-4,3.4) to (-4,4) to (7,4) to (7,-15.3) to (7.8,-15.3);
+%\draw plot [smooth, tension=0.4,->] coordinates {  (-4,3.4) (-3,5) (6,4) (7,-13.5) (7.8,-15.3)};
+\fill (7.8,-15.3) circle (2pt);
+
+
+%Unit t%
+\draw[black,->] (T.south) to[in=-10,out=-90, looseness=0.3] (-8,-2);
+\draw[black,->] (T.south) to[in=-10,out=-90, looseness=0.3] (-8,1.5);
+
+\draw[black,->] (T.south) to[in=-10,out=-90, looseness=0.3] (-1,-4);
+%\draw[black,-] (T.south) to[in=-10,out=-90, looseness=0.3] (-5,-4.7);
+
+\draw[black,->] (T.south) to[in=-10,out=-90, looseness=0.3] (-2,-8);
+%\draw[black,-] (T.south) to[in=-10,out=-90, looseness=0.3] (-5,-9.4);
+
+%\draw[black,-] (T.south) to[in=-10,out=-90, looseness=0.3] (-5,-10.6);
+\draw[black,->] (T.south) to[in=-10,out=-90, looseness=0.3] (-4,-12);
+
+%\draw[black,-] (T.south) to[in=-10,out=-90, looseness=0.3] (-5,-14.6);
+\draw[black,->] (T.south) to[in=-10,out=-90, looseness=0.3] (-7,-16);
+
+\draw[black,-] (T.south) to[in=-10,out=-90, looseness=0.3] (1.1,3);
+\fill (1.1,3) circle (2pt);
+
+%Unit e%
+\draw[black,-] (E.south) to[in=-10,out=-90, looseness=0.3] (-8,-2.5);
+\fill (-8,-2.5) circle (2pt);
+\draw[black,->] (E.south) to[in=-10,out=-90, looseness=0.3] (-8,1);
+
+\draw[black,->] (E.south) to[out=-70,in=-200, looseness=0.3] (0,-4);
+\draw[black,->] (E.south) to[out=-70,in=-200, looseness=0.3] (0,-8);
+\draw[black,->] (E.south) to[out=-70,in=-200, looseness=0.3] (1,-12);
+\draw[black,->] (E.south) to[out=-70,in=-200, looseness=0.3] (2,-16);
+%\draw[black,-] (E.south) to[out=-70,in=-200, looseness=0.3] (5,-5.4);
+
+%\draw[black,-] (E.south) to[out=-70,in=-200, looseness=0.3] (5,-7.3);
+%\draw[black,-] (E.south) to[out=-70,in=-200, looseness=0.3] (5,-9.4);
+
+%\draw[black,-] (E.south) to[out=-70,in=-200, looseness=0.3] (5,-11.3);
+%\draw[black,-] (E.south) to[out=-70,in=-200, looseness=0.3] (5,-12);
+
+%\draw[black,-] (E.south) to[out=-70,in=-200, looseness=0.3] (5,-14.6);
+%\draw[black,-] (E.south) to[out=-70,in=-200, looseness=0.3] (5,-16);
+
+% Connections between q-units and h-units
+\draw[black,->] (Q-1.east) -- (H-5.west);
+\draw [->, black, rounded corners = 10pt] (Q-1.east) to (4,-4) to (4,-8) to (H-6.west);
+
+\draw [->, black, rounded corners = 10pt] (Q-4.east) to (6,-16) to (6,-8) to (H-6.west);
+
+\draw [->, black, rounded corners = 10pt] (Q-3.east) to (5,-12) to (5,-4) to (H-5.west);
+%\draw[black,->] (Q-3.east) -- (H-5.west);
+
+%\draw[black,->] (Q-1.east) -- (H-6.west);
+%\draw[black,->] (Q-4.east) -- (H-6.west);
+
+%\draw[black,->] (Q-2.east) -- (H-7.west);
+\draw [->, black, rounded corners = 10pt] (Q-2.east) to (3,-8) to (3,-12) to (H-7.west);
+\draw[black,->] (Q-3.east) -- (H-7.west);
+
+%\draw[black,->] (Q-2.east) -- (H-8.west);
+\draw [->, black, rounded corners = 10pt] (Q-2.east) to (3,-8) to (3,-16) to (H-8.west);
+\draw[black,->] (Q-4.east) -- (H-8.west);
+
+%h-units$
+\draw [-, black, rounded corners = 10pt]   (-9,-38) to (-10,-38) to (-10,-17) to (-7.75,-17);
+\fill (-7.75,-17) circle (2pt);
+\draw [->, black, rounded corners = 10pt] (-10,-20) to (-10,-17.2)  to (-7.9,-17.2);
+\draw [->, black, rounded corners = 10pt] (-10,-20) to (-10,-17.4)  to (-7.98,-17.4);
+\draw [->, black, rounded corners = 10pt] (-10,-20) to (-10,-17.6)  to (-8.04,-17.6);
+%
+\draw [-, black, rounded corners = 10pt] (-8,-37.5) to (-9,-37.5) to (-9,-21)  to (-3.75,-21);
+\fill (-3.75,-21) circle (2pt);
+\draw [->, black, rounded corners = 10pt] (-9,-35) to (-9,-21.2)  to (-3.89,-21.2);
+\draw [->, black, rounded corners = 10pt] (-9,-35) to (-9,-21.4)  to (-3.97,-21.4);
+
+\draw [-, black, rounded corners = 10pt] (-7.5,-37.5) to (-9,-37.5) to (-9,-22)  to (-7,-22);
+\fill (-7,-22) circle (2pt);
+\draw [->, black, rounded corners = 10pt] (-7.5,-37.5) to (-9,-37.5) to (-9,-22.2)  to (-7.65,-22.2);
+\draw [->, black, rounded corners = 10pt] (-7.5,-37.5) to (-9,-37.5) to (-9,-22.4)  to (-8,-22.4);
+%
+\draw [-, black, rounded corners = 10pt] (-7.5,-37) to (-8,-37) to (-8,-25.5) to (0.5,-25.5);
+\fill (0.5,-25.5)  circle (2pt);
+\draw [->, black, rounded corners = 10pt] (-8,-26.2) to (-8,-25.7) to (0.17,-25.7);
+
+\draw [-, black, rounded corners = 10pt] (-8,-26.7) to (-8,-26.2) to (-2.9,-26.2);
+\fill  (-2.9,-26.2)  circle (2pt);
+\draw [->, black, rounded corners = 10pt] (-8,-26.7) to (-8,-26.4) to (-3.62,-26.4);
+
+\draw [-, black, rounded corners = 10pt] (-8,-27.7) to (-8,-26.9) to (-6.7,-26.9);
+\fill (-6.7,-26.9)  circle (2pt);
+\draw [->, black, rounded corners = 10pt] (-8,-27.7) to (-8,-27.1) to (-7.63,-27.1);
+%
+\draw [-, black, rounded corners = 10pt] (-6,-36.5)  to (-7,-36.5) to (-7,-30) to  (4.8,-30);
+\fill (4.8,-30)  circle (2pt);
+\draw [-, black, rounded corners = 10pt] (-7,-30.7) to (-7,-30.2) to  (1.15,-30.2);
+\fill (1.15,-30.2) circle (2pt);
+\draw [-, black, rounded corners = 10pt] (-7,-30.9) to (-7,-30.4) to  (-2.9,-30.4);
+\fill (-2.9,-30.4) circle (2pt);
+\draw [-, black, rounded corners = 10pt] (-7,-33) to (-7,-32) to  (-6,-32);
+\fill (-6,-32) circle (2pt);
+
+% Connections to the units q0 and d
+\draw [->, black, rounded corners = 10pt] (-9,-1) to (-9,0) to (-8.4, 0);
+\draw [->, black, rounded corners = 10pt] (-8.4,-16) to (-9,-16) to (-9,3) to (-4.4,3);
+
+\draw [->, black, rounded corners = 10pt] (-10.5,-1) to (-10.5,0) to (-8.4, 0);
+\draw [->, black, rounded corners = 10pt] (-4.4,-20) to (-10.5,-20) to (-10.5,3) to (-4.4, 3);
+
+\draw [->, black, rounded corners = 10pt] (-11.5,-1) to (-11.5,0) to (-8.4, 0);
+\draw [->, black, rounded corners = 10pt] (-0.4,-24) to (-11.5,-24) to (-11.5,3) to (-4.4,3) ;
+
+\draw [->, black, rounded corners = 10pt] (-12.5,-1) to (-12.5,0) to (-8.4, 0);
+\draw [->, black, rounded corners = 10pt] (3.6,-28) to (-12.5,-28) to (-12.5,3) to (-4.4,3);
+
+\draw [->, black, rounded corners = 10pt]  (-13.5,-1) to (-13.5,0) to (-8.4, 0);
+\draw [->, black, rounded corners = 10pt]  (7.6,-32) to (-13.5,-31.5) to (-13.5,3) to (-4.4,3);
+
+% Connections between h-units and the connections of units q5 and q8
+\draw  [->, black, rounded corners = 10pt] (8.4,-16) to (10,-16) to (10,-36.5) to (-14.5,-36.5) to (-14.5,-13) to (-9,-13);
+\draw  [->, black, rounded corners = 10pt] (-14.5,-16) to (-14.5,-13.5) to (-10.5,-13.5);
+\draw  [->, black, rounded corners = 10pt] (-14.5,-17) to (-14.5,-14) to (-11.5,-14);
+\draw  [->, black, rounded corners = 10pt] (-14.5,-17) to (-14.5,-14.5) to (-12.5,-14.5);
+\draw  [->, black, rounded corners = 10pt] (-14.5,-17) to (-14.5,-15) to (-13.5,-15);
+
+\draw [->, black, rounded corners = 10pt]  (8.4,-12) to (10.5,-12) to (10.5,-37) to (-15,-37) to (-15,-10) to (-9.05,-10);
+\draw  [->, black, rounded corners = 10pt] (-15,-16) to (-15,-10.5) to (-10.5,-10.5);
+\draw  [->, black, rounded corners = 10pt] (-15,-17) to (-15,-11) to (-11.5,-11);
+\draw  [->, black, rounded corners = 10pt] (-15,-17) to (-15,-11.5) to (-12.5,-11.5);
+\draw  [->, black, rounded corners = 10pt] (-15,-17) to (-15,-12) to (-13.5,-12);
+
+\draw  [->, black, rounded corners = 10pt] (8.4,-8) to (11,-8) to (11,-37.5) to (-15.5,-37.5) to (-15.5,-7) to (-9.05,-7);
+\draw  [->, black, rounded corners = 10pt] (-15.5,-16) to (-15.5,-7.5) to (-10.5,-7.5);
+\draw  [->, black, rounded corners = 10pt] (-15.5,-17) to (-15.5,-8) to (-11.5,-8);
+\draw  [->, black, rounded corners = 10pt] (-15.5,-17) to (-15.5,-8.5) to (-12.5,-8.5);
+\draw  [->, black, rounded corners = 10pt] (-15.5,-17) to (-15.5,-9) to (-13.5,-9);
+
+\draw [->, black, rounded corners = 10pt]  (8.4,-4) to (11.5,-4) to (11.5,-38) to (-16,-38) to (-16,-4) to (-9,-4);
+\draw  [->, black, rounded corners = 10pt] (-16,-16) to (-16,-4.5) to (-10.5,-4.5);
+\draw  [->, black, rounded corners = 10pt] (-16,-17) to (-16,-5) to (-11.5,-5);
+\draw  [->, black, rounded corners = 10pt] (-16,-17) to (-16,-5.5) to (-12.5,-5.5);
+\draw  [->, black, rounded corners = 10pt] (-16,-17) to (-16,-6) to (-13.5,-6);
+
+\node[align = center, below left=-8cm and -6cm of abdnotext] {$\CalN_{\CalA_{\CalP_1}}'$};
+\end{tikzpicture}
+} 
+
+

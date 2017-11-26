@@ -1,0 +1,13 @@
+% !TEX root = ../thesis.tex
+
+\pdfbookmark[0]{Abstract}{Abstract}
+\chapter*{Abstract}
+\label{sec:abstract}
+
+Well known psychological experiments have shown that classical logic does not seem to be adequate for modelling human reasoning. Therefore, we focus on an approach called the weak completion semantics which considers the least model of the weak completion of logic programs under the three-valued {\L}ukasiewicz logic. This approach has shown how to adequately model many of the famous human reasoning tasks found in the literature, mostly by means of sceptical abduction. The reasoning is done by searching for all the abductive explanations for a given observation and computing which consequences can be derived from them. 
+
+The computation of sceptical consequences for an abductive problem has been encoded by means of a connectionist network. Abduction is known to be a computationally expensive problem, where computing the abductive sceptical consequences is DP-complete. The bottleneck of this problem is in the exponential number of candidate explanations that have to be considered. Therefore, we focus on the component of the connectionist network responsible for generating those candidates and try to optimise it.
+
+We start by adding a minimality constraint to the generation of candidate explanations, which considerably reduces the number of candidates generated in practice, but the problem still remains the same in the worst case. We assume that humans do not consider all the candidate explanations when reasoning about skeptical abduction, but rather a subset of them. Therefore, we propose to substitute the current approach by a recurrent network such as Jordan or Elman networks which we have shown to be capable of learning arbitrary sequences of candidate explanations.
+
+It is commonly required from computational models in artificial intelligence to exhibit a behaviour similar to the biological brain. Therefore, we propose some psychological experiments to confirm the assumptions we have made, bearing in mind that our approach has been designed in such a way that it could easily be aligned with these psychological experiments independent of their outcome.

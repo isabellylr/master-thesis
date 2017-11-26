@@ -1,0 +1,139 @@
+% !TEX root = ../thesis.tex
+
+\chapter{Psychological Experiments}
+\label{sec:exp}
+
+It is beyond the scope of this master thesis to specify and execute psychological experiments. In order to so, we need the support of cognitive scientists with a background in reasoning and memory models. Nevertheless, it is clear that just modelling is not satisfying and, as argued by Strube \cite{strube1992role}, knowledge engineering should also aim at being cognitively adequate. Our current approach relies on several assumptions and, therefore, in order to verify its cognitive adequacy, these assumptions should be tested. Hence, in this chapter we will consider various open questions and discuss preliminary possible setups for psychological experiments. These questions arise from a modelling point of view rooted in the weak completion semantics and its connectionist encoding as discussed in the previous chapters. 
+
+The first assumption we make is that humans do not consider several candidate explanations in parallel, but rather one at a time. Moreover, we require candidate explanations to be non-complementary and, later on, to be minimal as well. Based on the exponential number of candidate explanations, we also assume that humans do not consider all but rather a subset of them. If all the candidate explanations are considered, their generation order does not affect the outcome. However, if the hypothesis of bounded candidates is confirmed, then different orderings might lead to different outcomes and, therefore, we would also be interested in checking which order is preferred. Another important aspect would be which kind of bounds are applied by humans and based on what.
+
+Some of these assumptions are intuitive and seem to make sense also from the cognitive point of view. For example, it is hard to imagine humans testing several candidates at the same time. On the other hand, some assumptions are merely motivated by the computational aspect, as, for example, requiring candidates to be minimal significantly reduces the number of candidates generated in the average case. However, it is not that difficult to imagine a scenario where a non-minimal explanation would be plausible. In either case, executing these psychological experiments is an important step which will give us the necessary support to verify, correct and improve our approach.
+
+\section{Hypotheses}
+
+\textbf{Hypothesis I: Only basic candidate explanations are considered}
+
+As it is defined in the abductive framework, the set of abducibles consists only of the undefined atoms. Consequently, the set of candidate explanations is also only based on the undefined atoms which means that our approach only considers the basic candidate explanations. This means that, if we have from the background knowledge the conditionals \textit{if a, then b} and \textit{if b, then c}, and we observe that \textit{c} holds, the only possible explanation is regarding \textit{a}, but not \textit{b}.
+
+This is  the first hypothesis made in our approach and, therefore, it would be appropriated to start the phycological experiments by verifying this assumption. A simple way to do so would be by giving the participants a background knowledge as the following:
+\[
+\begin{array}{l}
+\mbox{\textit{If it rained last night, then the grass is wet.}}\\
+\mbox{\textit{If the grass is wet, then the shoes are wet.}}\\
+\end{array}
+\]
+If we observe that \textit{the shoes are wet}, in our approach, because we only consider basic explanations, the only possible explanation for this observation would be \textit{it trained last night}. Therefore, if the participants are given this observation and asked whether \textit{it trained last night} follows, they would reply yes in the case our hypothesis is correct. This experiment alone is not enough to confirm our assumption, but it is an initial setup and would give us an indication on whether the hypothesis holds.
+
+
+\textbf{Hypothesis II: The generation of candidate explanations is done sequentially}
+
+Although it is hard to imagine that humans would consider several candidate explanations at the same time and reason with respect to them in parallel, this is an assumption which underlies our whole approach. Therefore, although it seems to be a plausible assumption, it would be appropriated to verify that this is indeed the case by means of phycological experiments.
+
+\textbf{Hypothesis III: Complementary candidate explanations are not considered}
+
+Our approach considers a positive information to be stronger than a negative information. This is an underlying assumption of the weak completion semantics as the clause $a \leftarrow \top$ and $a \leftarrow \bot$ are combined into the clause $a \leftrightarrow \top \vee \bot$, which is semantically equivalent to $a \leftrightarrow \top$. Therefore, from the computational point of view, considering complementary candidate explanations does not make sense as the negative part of the complementary pair is anyways overwritten.
+
+Moreover, considering only non-complementary candidate explanations seems to make sense from the cognitive point of view as well. If we take their semantics into account, a complementary candidate would be contradictory as it contains a fact and an assumption with the same head. It is hard to imagine that one would try to explain a given observation by stating that something is true and false at the same~time. 
+
+For example, let us reconsider Byrne's Suppression Task which we have repeatedly discussed in the previous chapters. If we observe that \textit{she goes to the library} is true, we probably will not think that \textit{she has an essay to write} and \textit{she does not have an essay to write} is a reasonable explanation for our observation. We might think about them separately as explanations or together with other facts and assumptions, but probably not in the same candidate explanation.
+
+Although this assumption seems to make sense from a cognitive point of view, it is still a consequence of the weak completion semantics which has not been tested by a psychological experiment and, therefore, we do not have the grounds to confirm its accuracy. Given this, including a test on the generation of only non-complementary candidates is desired.
+
+\textbf{Hypothesis IV: Only minimal candidate explanations are considered}
+
+Even after filtrating the candidate explanations to consider only the ones which are non-complementary, there is a considerably large number of candidates left to be considered. If the set of abducibles has cardinality $2n$
+ we obtain $3^n$ non-complementary candidate explanations. It is hard to imagine that humans systematically try all those candidates and, therefore, we try to reduce this number by adding another constraint which rules out the non-minimal candidate explanations as well. In the average case, this minimality constraint indeed significantly reduces the number of candidate explanations, but in the worst case the problem remains the same. For example, if the observation has only one explanation which is the last one in the sequence being considered, all the candidates are still generated.
+ 
+Besides this, the minimality assumption is motivated by the fact that explanations are monotonic, which alone is not enough to state that humans exclude the non-minimal candidates when trying to explain an observation. Moreover, it is not so trivial to see that minimality also makes sense from a cognitive point of view. First of all, the minimality property implies a predefined ordering based on the cardinality of the candidates. As mentioned earlier, the ordering of the generation of candidate explanations is also an open question and, therefore, we can not only assume that humans also follow this order in their way of reasoning without verifying it. 
+ 
+Given this, an experiment which tests whether humans indeed consider only minimal candidate explanations is crucial. We could start by testing the hypothesis that humans only consider the minimal explanations, which can already give an indication on the minimality of the candidates. If this hypothesis is refuted, then we can already discard the minimality constraint. Otherwise, although it is a strong indication on the minimality of candidates, it could still be the case that non-minimal candidates are generated first and revised afterwards. Therefore, in the case the pre-hypothesis is confirmed, another experiment testing on the cardinality ordering of candidates is still strongly suggested.
+
+One possible way to test this would be by not giving the participants enough time to generate all the explanations and ask them for the consequences. Based on this, we can observe if the given consequences are derived from smaller candidate explanations and the cardinality ordering is indeed considered. For example, consider that participants are given the conditionals in Byrne's suppression task  as background knowledge, the fact \textit{she will study late in the library} as an observation and asked if it follows that \textit{she has an essay to write}. If participants are given the time to generate only one explanation and the cardinality constraint is not applied, then the first explanation would be that \textit{she has an essay to write} and \textit{a text book to read} and in this case the majority of the participants would say that \textit{she has an essay to write} follows. In this case, our assumption would be refuted.
+
+However, if participants consider the cardinality constraint, then the first explanation would be either that \textit{she has an essay to write} or that \textit{she has a text book to read}. In this case, the percentage of participants who would reply that \textit{she has an essay to write} follows should drop to approximately 50\%. If this is the case, them the experiment would support our hypothesis. The sequence would be affected by different factors, e.g. order in which the conditionals are presented, and, therefore, variations on the configurations of those factors should also be applied to the experiment for a more accurate result.
+ 
+\textbf{Hypothesis V: Candidate explanations are generated up to a bound}
+
+Even if hypothesis III is confirmed, minimality does not reduce the number of candidate explanations to be considered is all the cases. However, as mentioned before, we do not believe that it might be the case that humans generate all candidate explanations, but rather a subset of them. Therefore, there must be other factors affecting the subset of candidates considered. Later on we would like to investigate this factors as well, but first of all we would like to confirm the assumption that the generation of candidate explanations is indeed bounded.
+
+One potential way of doing so could be, for example, by simply giving an abductive problem to the participants, asking them the skeptical consequences and, afterwards, analysing if those consequences can only follow in the scenario where all candidate explanations have been considered. If this is not the case, we have a strong indication that there is a bound and, therefore, the following hypotheses should be tested as well in order to better understand such bounds.
+
+\textbf{Hypothesis VI: Candidate explanations are generated in different orders}
+
+Let us recall the number of different orderings in which the candidate explanations might be considered. For a set of candidate explanations $\CalC$ of cardinality $n$ there are $n!$ different ways of ordering these $n$ candidate explanations. If we consider the minimality constraint in the ordering, the number of sequences can be reduced, but will still be significantly large specially when $n$ increases. When applying the minimality constraint to $\CalC$, as we need to consider the cardinality ordering, we have the following number of orderings: 
+\[
+c_0! * c_1! * \dots * c_n!,
+\]
+where $c_i$ represents the number of elements in $\CalC$ with cardinality $i$. 
+
+Given that, even after applying the minimality constraint, there are so many possible orderings, it is trivial to see that we cannot just assume one fixed and pre-defined sequence as it was done by the previous approach. Rather, we would like to observe how this generation is done by humans and, based on this, abstract properties which will allow us to restrict these possibilities.
+
+As shown in Example~\ref{example:bound} on page~\pageref{example:bound}, the two different orderings considered for the same bound presents different sceptical consequences. Assume we would like to answer the question whether $e$ follows sceptically from $\CalP_{sup}$ and $\CalO_1$. The answer for this question in the ordinary scenario is that $e$ does not follow sceptically. However, we have seen that $e$ follows skeptically for the first but not for the second ordering considered that the bound is equal to three.
+
+In order to illustrate our assumptions, we use here small examples where the number of abducibles is not that large only for didactic reasons. In these examples, the bound might not make a lot of sense as it is totally plausible to imagine that humans would consider, for example, all the nine candidate explanations when reasoning about Byrne's suppression task. However, we have to consider that this number grows exponentially and, with four abducibles there are already eighty-one candidate~explanations.
+
+\textbf{Hypothesis VII: Different bounds are applied depending on different factors}
+
+As has been mentioned before, there are many different ordering considered for the same set of candidate explanations. Therefore, if we consider a bound $k$ for a given set of candidates $\CalC$, different orderings of $\CalC$ would result in different sceptical consequences for the same bound $k$. Moreover, the same ordering of $\CalC$ bounded by $k$ assuming different values would also result in different sceptical consequences. For instance, in Example~\ref{example:bound} on page~\pageref{example:bound}, $e$ follows skeptically for one of the orderings if a bound equal to three is considered, but this no longer holds if the bound is increased to~four.
+
+Considering that different skeptical consequences may follow for different bounds, it is crucial to understand the factors in which the definition of such a bound is based on so we can incorporate these factors in our approach. Instead of designing an experiment which focuses on the bound itself, we would rather propose several experiments concerning different background knowledges which allow us to derive the different bound considered and then analyse this data in order to abstract the factors out of it.
+
+One way to do so would be by running a pre-experiment which defines the time needed for a given participant to generate only one candidate explanation. After this, we would measure the time needed for the same participant to solve the different given tasks and based on the outcome of the previous experiment derive which bound has been used. If we can identify patterns between the characteristics of the given problems and the bounds used, we might be able to define the factors which influences the process of defining these bounds.
+
+\section{Outlook}
+
+In this chapter we give a general overview of the hypothesis which are already considered in our approach as well as the ones we strongly believe and could easily incorporate in our framework. As the cognitive adequacy of our framework is a crucial aspect, we would like to execute psychological experiments which are going to confirm or refute our hypotheses.
+
+In the case those hypothesis are confirmed, then we have a strong support for our theory. However, even if any of these hypotheses is refuted, we have designed our framework in such a flexible way that it could easily be adapted to any of the potential experimental outcomes.
+
+\newpage
+\vspace*{\fill}
+\begin{tcolorbox}
+\begin{example}
+\label{example:bound}
+\normalfont 
+Reconsider program $\CalP_1$, observation $\CalO_1$ and their correspondent set of non-complementary and minimal candidate explanations $\CalC$. Note that |$\CalC$| = 6. If we do not take the cardinality constraint into account, there are $6! = 720$ possible sequences for $\CalC$. Otherwise, there are $1!*4!*1! = 24$. From these possible sequences, let us consider the following two:
+\[
+\begin{aligned}
+\CalC_1 & = & \{\emptyset, \{e \leftarrow \top\}, \{e \leftarrow \bot\}, \{t \leftarrow \top\}, \{t \leftarrow \bot\}, \{e \leftarrow \bot, t \leftarrow \bot\}  \},\\
+\CalC_2 & = & \{\emptyset, \{t \leftarrow \top\}, \{t \leftarrow \bot\}, \{e \leftarrow \top\}, \{e \leftarrow \bot\}, \{e \leftarrow \bot, t \leftarrow \bot\}  \}.
+\end{aligned}
+\]
+The set of actual explanations for $\CalC_1$ and $\CalC_2$ are:
+\[
+\begin{aligned}
+\CalE_{\CalC_1} & = & \{ \{e \leftarrow \top\}, \{t \leftarrow \top\}\}, \\
+\CalE_{\CalC_2} & = & \{ \{t \leftarrow \top\}, \{e \leftarrow \top\}\}. 
+\end{aligned}
+\]
+
+If we now consider bounded reasoning with bound $k = 3$ and $k = 4$, we have: 
+\[
+\begin{aligned}
+\CalC_1^3 & = & \{\emptyset, \{e \leftarrow \top\}, \{e \leftarrow \bot\}\}, &\quad& \CalC_1^4 & = & \{\emptyset, \{e \leftarrow \top\}, \{e \leftarrow \bot\}, \{t \leftarrow \top\}\},\\
+\CalC_2^3 & = & \{\emptyset, \{t \leftarrow \top\}, \{t \leftarrow \bot\}\}, &\quad& \CalC_2^4 & = & \{\emptyset, \{t \leftarrow \top\}, \{t \leftarrow \bot\}, \{e \leftarrow \top\}\}.
+\end{aligned}
+\]
+The set of actual explanations for bounded $\CalC_1$ and $\CalC_2$ are:
+\[
+\begin{aligned}
+&&\CalE_{\CalC_1^3} & = & \{ \{e \leftarrow \top\}\}, \\
+&&\CalE_{\CalC_2^3} & = & \{ \{t \leftarrow \top\}\}, \\
+\CalE_{\CalC_1^4} & = & \CalE_{\CalC_2^4} & = & \{ \{t \leftarrow \top\}, \{e \leftarrow \top\}\}. 
+\end{aligned}
+\]
+
+The sceptical consequences for the bounded candidate explanations are: 
+\[
+\begin{aligned}
+&&\CalS_{\CalE_{\CalC_1^3}}  & =& \langle \{e, l\}, \{ab_1, ab_2\} \rangle, \\
+&&\CalS_{\CalE_{\CalC_2^3}} & =&  \langle \{t, l\}, \{ab_1, ab_2\} \rangle. \\
+\CalS_{\CalE_{\CalC_1^4}} &=& \CalS_{\CalE_{\CalC_2^4}} &=&  \langle \{l\}, \{ab_1, ab_2\} \rangle.
+\end{aligned}
+\]
+
+The facts $e$ and $t$ follow sceptically from $\CalP_1$ and $\CalO_1$ if the orderings $\CalC_1^3$ and $\CalC_2^3$ are respectively considered with bound three. However, this is no longer the case if the bound is increased to four.
+\end{example}
+\end{tcolorbox}
+\vspace*{\fill}
+\newpage

@@ -1,0 +1,31 @@
+% !TEX root = ../thesis.tex
+
+\newcommand{\modifiedconnectionspassive}[1][]{
+\begin{tikzpicture}
+
+\tikzstyle{neuron}=[circle,draw=black,,minimum size=12pt,inner sep=0pt,text width=3em, text centered]   
+
+\node[neuron, label=above:$u_3$] (u3) at (1+1,1+2) {};
+\node[neuron, label=below:$u_1$] (u1) at (1-2,1)  {};
+\node[neuron, label=below:$u_2$] (u2) at (1+4,1)  {};
+
+\draw [black,->,shorten >= -0.5pt, shorten <= -0.5pt]  (u1) to (u2);
+\path[black] (u1) -- coordinate[midway, label={[yshift=-0.7cm]$\omega$}] (mid) (u2);
+\draw [black,-]  (u3) to ($(mid) + (0,0.1)$);
+\fill ($(mid) + (0,0.05)$) circle (2pt);
+\end{tikzpicture}
+}
+\newcommand{\modifiedconnectionsactive}[1][]{
+\begin{tikzpicture}
+\tikzstyle{neuron}=[circle,draw=black,,minimum size=12pt,inner sep=0pt,text width=3em, text centered]  
+
+\node[neuron, label=above:$u_3$] (u3) at (1+1,1+2)  {};
+\node[neuron, label=below:$u_1$] (u1) at (1-2,1)  {};
+\node[neuron, label=below:$u_2$] (u2) at (1+4,1)  {};
+
+\draw [black,->,shorten >= -0.5pt, shorten <= -0.5pt]  (u1) to (u2);
+\path[black] (u1) -- coordinate[midway, label={[yshift=-0.7cm]$\omega$}] (mid) (u2);
+\draw[black,->,shorten >= -0.25pt, shorten <= -0.25pt]   (u3) to (mid.north);
+
+\end{tikzpicture}
+}

@@ -1,0 +1,210 @@
+% !TEX root = ../thesis.tex
+% ------------------------------------------------------------------------------------------------------------------------------------------------------------ %
+\newcommand{\NetworkAP}[1][]{% 1 optional parameter for options for the tikz picture
+%TIKS BEGIN
+\def\layersep{1.5cm}
+\def\networkini{4.0cm}
+\def\networky{1}
+\def\networkinisk{8.8}
+\def\netx{1}
+\def\nety{1}
+\def\sep{1.5}
+\def\sepx{\distancelayers}
+%\resizebox{0.6\textwidth}{!}{%
+\begin{tikzpicture}[
+              connection/.style={inner sep=0,outer sep=0}
+transition/.style={rectangle,draw=black!50,fill=black!20,thick,
+inner sep=0pt,minimum size=40mm},
+shorten >=1pt,->,draw=black!50, node distance=\layersep]
+\draw [fill = lightgray];
+  \tikzstyle{every pin edge}=[-,shorten <=1pt]
+%\tikzstyle{every pin edge}=[0pt]    
+%\tikzstyle{neuron}=[circle,fill=black!25,minimum size=12pt,inner sep=0pt]
+\tikzstyle{input}=[box,draw=gray!80,,minimum size=12pt,inner sep=0pt,text width=2em, text centered]
+\tikzstyle{neuron}=[circle,draw=gray!80,,minimum size=12pt,inner sep=0pt,text width=2em, text centered]    
+\tikzstyle{or neuron}=[neuron]; %, fill=gray!50 ,fill=black!25
+\tikzstyle{and neuron}=[neuron];  %, fill=gray!20
+\tikzstyle{annot} = [text width=2em, text centered]
+
+% Draw the input layer nodes
+\node[neuron, label=above:$d$] (inputzero) at (\netx-8,\nety)  {\tiny$\frac{\omega}{2}$};
+
+% \coordinate[above right of=inputzero] (out);
+% 
+% \draw[black] (inputzero.north) to  (out);
+
+\node[neuron, label=above:$n$] (inputone) at (\netx-4,\nety)  {};
+\node[neuron, label=left:$q_0$, , fill=lightgray] (inputtwo) at (\netx,\nety-1)  {$\inputtreshold$};
+
+
+\path[black] (inputzero.north) -- coordinate[midway] (mqz) (inputzero.south);
+\draw [black]  (inputzero.north) to[out=20,in=-50,looseness=3.2]  (inputzero.south);
+
+\draw[black,-] (inputone.south) to[out=-100,in=-40,looseness=0.7] ($(mqz) + (0.55,-0.45)$);
+\fill ($(mqz) + (0.55,-0.45)$) circle (2pt);
+
+\node[neuron, label=right:$\essay$] (abdessay) at (\netx+4,\nety-2.5)  {$\outputtreshold$};
+\node[neuron, label=right:$\noessay$] (abdnoessay) at (\netx+4,\nety-4)  {$\outputtreshold$};
+\node[neuron, label=right:$\textbook$] (abdtext) at (\netx+4,\nety-5.5)  {$\outputtreshold$};
+\node[neuron, label=right:$\notextbook$] (abdnotext) at (\netx+4,\nety-7)  {$\outputtreshold$};
+
+%hidden
+
+
+\node[neuron, label=left:$q_1$] (hidden1) at (\netx,\nety-2.5)  {$\hiddentreshold$};
+\node[neuron, label=left:$q_2$] (hidden2) at (\netx,\nety-4)  {$\hiddentreshold$};
+\node[neuron, label=left:$q_3$] (hidden3) at (\netx,\nety-5.5)  {$\hiddentreshold$};
+\node[neuron, label=left:$q_4$] (hidden4) at (\netx,\nety-7)  {$\hiddentreshold$};
+\node[neuron, label=left:$q_5$] (hidden5) at (\netx,\nety-8.5)  {$\hiddentreshold$};
+\node[neuron, label=left:$q_6$] (hidden6) at (\netx,\nety-10)  {$\hiddentreshold$};
+\node[neuron, label=left:$q_7$] (hidden7) at (\netx,\nety-11.5)  {$\hiddentreshold$};
+\node[neuron, label=left:$q_8$] (hidden8) at (\netx,\nety-13)  {$\hiddentreshold$};
+
+
+% \draw [black]  (inputone.east) to [out=-45,in=-150,looseness=1]  (inputtwo.west);
+
+\draw[black] (inputtwo.south) to (hidden1.north);
+
+\draw [black]  (hidden1.south) to (hidden2.north);
+\draw [black]  (hidden2.south) to (hidden3.north);
+\draw [black]  (hidden3.south) to (hidden4.north);
+\draw [black]  (hidden4.south) to (hidden5.north);
+\draw [black]  (hidden5.south) to (hidden6.north);
+\draw [black]  (hidden6.south) to (hidden7.north);
+\draw [black]  (hidden7.south) to (hidden8.north);
+% \draw [black]  (hidden8.east)  to[out=-180,in=200, edge node={node [sloped,above]} , looseness=0.25]  (inputone.west);
+
+
+% \draw[black] (hidden8.south) .. controls ($ (hidden8) - (8,3)$)
+% and ($ (inputtwo) + (-0.5,-0.5)$) .. (inputtwo.west);
+
+\coordinate[below left of=hidden8] (cont);
+
+\draw[black,rounded corners=10pt, -] (hidden8.south) |- (cont);
+\draw[black,rounded corners=50pt] ($(cont) + (0.5,0)$) -| (inputzero.south);
+
+\draw[black] (hidden8.south)  to[out=-25,in=40,looseness=1]  (inputtwo.north);
+
+\draw[black,shorten >= -0.5pt, shorten <= -0.5pt] (inputtwo.south) to[out=-100,in=-140,looseness=3.2] (inputtwo.west) node (L1) {};
+
+
+\path[black] (inputtwo.south) -- coordinate[midway] (mq0) (inputtwo.west);
+
+
+\path[black,shorten >= -0.5pt, shorten <= -0.5pt] (hidden1.south) -- coordinate[midway] (mq1) (hidden1.west);
+\path[black] (hidden2.south) -- coordinate[midway] (mq2) (hidden2.west);
+\path[black] (hidden3.south) -- coordinate[midway] (mq3) (hidden3.west);
+\path[black] (hidden4.south) -- coordinate[midway] (mq4) (hidden4.west);
+\path[black] (hidden5.south) -- coordinate[midway] (mq5) (hidden5.west);
+\path[black] (hidden6.south) -- coordinate[midway] (mq6) (hidden6.west);
+\path[black] (hidden7.south) -- coordinate[midway] (mq7) (hidden7.west);
+\path[black] (hidden8.south) -- coordinate[midway] (mq8) (hidden8.west);
+
+% \draw[black] (inputone.east)  to[out=-70,in=-190, looseness=0.8]  node {}( $(hidden1)!0.45!(inputtwo) $ );
+
+\draw[black,-] (inputone.south) to[out=-70,in=-190, looseness=0.6]   ($(mq0) - (0.4,0.3)$.west);
+\fill ($(mq0) - (0.4,0.3)$.north) circle (2pt);
+
+
+\draw[black,-] (inputone.south) to[out=-70,in=-190, looseness=0.6]   ($(mq1) - (0.4,0.3)$.west);
+\fill ($(mq1) - (0.4,0.3)$.north) circle (2pt);
+
+\draw[black,-] (inputone.south) to[out=-70,in=-190, looseness=0.6]   ($(mq2) - (0.4,0.3)$.west);
+\fill ($(mq2) - (0.4,0.3)$.north) circle (2pt);
+
+\draw[black,-] (inputone.south) to[out=-70,in=-190, looseness=0.6]   ($(mq3) - (0.4,0.3)$.west);
+\fill ($(mq3) - (0.4,0.3)$.north) circle (2pt);
+
+\draw[black,-] (inputone.south) to[out=-70,in=-190, looseness=0.6]   ($(mq4) - (0.4,0.3)$.west);
+\fill ($(mq4) - (0.4,0.3)$.north) circle (2pt);
+
+\draw[black,-] (inputone.south) to[out=-70,in=-190, looseness=0.6]   ($(mq5) - (0.4,0.3)$.west);
+\fill ($(mq5) - (0.4,0.3)$.north) circle (2pt);
+
+\draw[black,-] (inputone.south) to[out=-70,in=-190, looseness=0.6]   ($(mq6) - (0.4,0.3)$.west);
+\fill ($(mq6) - (0.4,0.3)$.north) circle (2pt);
+
+\draw[black,-] (inputone.south) to[out=-70,in=-190, looseness=0.6]   ($(mq7) - (0.4,0.3)$.west);
+\fill ($(mq7) - (0.4,0.3)$.north) circle (2pt);
+
+\draw[black,-] (inputone.south) to[out=-70,in=-190, looseness=0.6]   ($(mq8) - (0.4,0.3)$.west);
+\fill ($(mq8) - (0.4,0.3)$.north) circle (2pt);
+
+
+\draw[black,shorten >= -0.5pt, shorten <= -0.5pt] (inputone.south)  to[out=-50,in=-215, looseness=1.2]  node {} ( $(inputtwo) + (0.3,0.7)$ );
+
+
+\draw[black,shorten >= -0.5pt, shorten <= -0.5pt] (inputone.south)  to[out=-70,in=-180, looseness=0.8]  node {} ( $(hidden1)!0.42!(inputtwo)$ );
+
+\draw[black,shorten >= -0.5pt, shorten <= -0.5pt] (hidden1.south)  to[out=-100,in=-140,looseness=3.2] node {} (hidden1.west);
+\draw[black,shorten >= -0.5pt, shorten <= -0.5pt] (inputone.south)  to[out=-70,in=-180, looseness=0.8]  node {} ( $(hidden2)!0.42!(hidden1)$ );
+
+
+\draw[black,shorten >= -0.5pt, shorten <= -0.5pt]  (hidden2.south)  to[out=-100,in=-140,looseness=3.2]  node {} (hidden2.west);
+\draw[black,shorten >= -0.5pt, shorten <= -0.5pt]  (inputone.south)  to[out=-70,in=-180, looseness=0.8]  node {}( $(hidden3)!0.42!(hidden2) $ );
+
+\draw[black,shorten >= -0.5pt, shorten <= -0.5pt]  (hidden3.south)   to[out=-100,in=-140,looseness=3.2] node {} (hidden3.west);
+\draw[black,shorten >= -0.5pt, shorten <= -0.5pt] (inputone.south)  to[out=-70,in=-180, looseness=0.8]  node {}( $(hidden4)!0.41!(hidden3) $ );
+ 
+\draw[black,shorten >= -0.5pt, shorten <= -0.5pt]  (hidden4.south)   to[out=-100,in=-140,looseness=3.2]  node {} (hidden4.west);
+\draw[black,shorten >= -0.5pt, shorten <= -0.5pt] (inputone.south)  to[out=-70,in=-180, looseness=0.8]  node {}( $(hidden5)!0.41!(hidden4) $ );
+
+\draw[black,shorten >= -0.5pt, shorten <= -0.5pt] (hidden5.south)  to[out=-100,in=-140,looseness=3.2] node {} (hidden5.west); 
+\draw[black,shorten >= -0.5pt, shorten <= -0.5pt]  (inputone.south)  to[out=-70,in=-180, looseness=0.8]  node {}( $(hidden6)!0.41!(hidden5) $ );
+
+\draw[black,shorten >= -0.5pt, shorten <= -0.5pt]  (hidden6.south) to[out=-100,in=-140,looseness=3.2]  node {} (hidden6.west);
+\draw[black,shorten >= -0.5pt, shorten <= -0.5pt]  (inputone.south)  to[out=-70,in=-180, looseness=0.8]  node {}( $(hidden7)!0.41!(hidden6) $ );
+ 
+\draw[black,shorten >= -0.5pt, shorten <= -0.5pt]  (hidden7.south)  to[out=-100,in=-140,looseness=3.2] node {} (hidden7.west);
+\draw[black,shorten >= -0.5pt, shorten <= -0.5pt]  (inputone.south)  to[out=-70,in=-180, looseness=0.8]  node {}( $(hidden8)!0.41!(hidden7) $ );
+
+\draw[black,shorten >= -0.5pt, shorten <= -0.5pt]  (hidden8.south)  to[out=-100,in=-140,looseness=3.2]  node {} (hidden8.west);
+
+
+% hidden to output
+
+ \draw[black,shorten >= -0.5pt, shorten <= -0.5pt] (hidden1.south) to[out=0,in=-195, looseness=1.2] (abdessay.west);
+\draw[black,shorten >= -0.5pt, shorten <= -0.5pt]  (hidden2.south) to[out=0,in=-180, looseness=1.2] (abdnoessay.west);
+\draw[black,shorten >= -0.5pt, shorten <= -0.5pt]  (hidden3.south) to[out=0,in=-180, looseness=1.2](abdtext.west);
+\draw[black,shorten >= -0.5pt, shorten <= -0.5pt]  (hidden4.south) to[out=0,in=-180, looseness=1.2](abdnotext.west);
+
+ \draw[black,shorten >= -0.5pt, shorten <= -0.5pt] (hidden5.south) to[out=-40,in=-190, looseness=1] (abdessay.west);
+ \draw[black,shorten >= -0.5pt, shorten <= -0.5pt] (hidden6.south) to[out=-20, in=-170, looseness=0.7](abdessay.west);
+%  
+%  
+ \draw[black,shorten >= -0.5pt, shorten <= -0.5pt] (hidden7.south) to[out=-20,in=-180, looseness=0.6] (abdnoessay.west);
+ \draw[black,shorten >= -0.5pt, shorten <= -0.5pt] (hidden8.south) to[out=-10, in=-180, looseness=0.4](abdnoessay.west);
+%  
+  \draw[black,shorten >= -0.5pt, shorten <= -0.5pt] (hidden5.south) to[out=-40,in=-180, looseness=1.2] (abdtext.west);
+ \draw[black,shorten >= -0.5pt, shorten <= -0.5pt] (hidden6.south) to[out=-30, in=-180, looseness=1](abdnotext.west);
+%  
+%  
+ \draw[black,shorten >= -0.5pt, shorten <= -0.5pt] (hidden7.south) to[out=-20,in=-180, looseness=0.8] (abdtext.west);
+ \draw[black,shorten >= -0.5pt, shorten <= -0.5pt] (hidden8.south) to[out=-10, in=-180, looseness=0.6](abdnotext.west);
+ 
+ 
+% borders
+
+\coordinate[below right=7cm and -1cm of abdnotext] (cornerRightDown)  {};
+
+\coordinate[below left=1cm and 1cm of inputzero] (cornerLeftUp)  {};
+
+
+%\draw [-,dotted, gray]  (inputzero.east) to (inputone.west);
+%\draw [-,dotted, gray, rounded corners = 5pt]  (inputone.east) -| (abdessay.north);
+%\draw [-,dotted, gray]  (abdessay.south) to (abdnoessay.north);
+%\draw [-,dotted, gray]  (abdnoessay.south) to (abdtext.north);
+%\draw [-,dotted, gray]  (abdtext.south) to (abdnotext.north);
+
+%\draw [-,gray, dotted, rounded corners = 5pt] (cornerRightDown) -| (abdnotext);
+
+%\draw [-,gray, dotted, rounded corners = 5pt]  (cornerRightDown) -| (cornerLeftUp);
+
+% \draw [-,gray, rounded corners = 5pt] (cornerLeftUp) |-  (cornerRightDown);
+%\draw[-,gray, rounded corners = 5pt, dotted] (cornerLeftUp) |- (inputzero);
+
+\node[align = center, below left=6cm and 8.7cm of abdnotext] {$\CalN_{\CalA_{\CalP_1}}$};
+
+\end{tikzpicture}
+
+} 

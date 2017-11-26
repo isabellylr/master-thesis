@@ -1,0 +1,150 @@
+% !TEX root = ../thesis.tex
+
+\newcommand{\candidatestree}[1][]{% 1 optional parameter for options for the tikz picture
+\begin{tikzpicture}[grow=right, ->,
+  baseline,
+  level distance=20mm,
+  text depth=.1em,
+  text height=.8em,
+  level distance=80pt,
+  level 1/.style={sibling distance=40em},
+  level 2/.style={sibling distance=45em},
+  level 3/.style={sibling distance=20em},
+  level 4/.style={sibling distance=10em},
+  level 5/.style={sibling distance=5em}]
+\node {0000}
+    child { node {done} edge from parent[solid] }
+    child {
+        node {1000}  edge from parent[dashed]     
+        child {
+		node {0100} edge from parent[solid]
+		child { 
+			node {0010} edge from parent[solid]
+			child { 
+				node {0001} edge from parent[snake]
+				child { 
+					node {done} edge from parent[snake] 
+				}
+			}
+		}
+		child {
+			node {0010}
+			edge from parent[dashed]
+			child { 
+				node {0001} edge from parent[solid]
+				child { 
+					node {done} edge from parent[solid] 
+				}
+				child { 
+					node {0101} edge from parent[dashed]
+					child { 
+						node {done} edge from parent[solid,snake] 
+					}
+				}
+			}
+			child {
+				node {0001} edge from parent[dashed]
+				child {
+					node {0110} edge from parent[solid]
+					child { 
+						node {done} edge from parent[solid,snake] 
+					}
+				}
+				child { 
+					node {0110} edge from parent[dashed]
+					child { 
+						node {0101} edge from parent[solid,snake]
+						child { 
+							node {done} edge from parent[solid,snake] 
+						}
+					}
+				}
+			}
+		}
+	}
+	child {
+                node {0100} edge from parent[dashed]
+                	child {
+			node {0010} edge from parent[solid]
+			child {
+				node {0001} edge from parent[solid]
+				child { node {done} edge from parent[solid] }
+				child { 
+					node {1001} edge from parent[dashed]
+					child { 
+						node {done} edge from parent[solid,snake] 
+					}
+				}
+			}
+			child {
+				node {0001} edge from parent[dashed]
+				child {
+					node {1010}
+					edge from parent[solid]
+					child { 
+						node {done} edge from parent[solid,snake] 
+					}
+				}
+				child {
+					node {1010}
+					edge from parent[dashed]
+					child {
+						node {1001} edge from parent[solid,snake]
+						child { 
+							node {done} edge from parent[solid,snake] 
+						}
+					}
+				}
+			}
+		}
+		child {
+			node {0010} edge from parent[dashed]
+			child {
+				node {0001}
+				edge from parent[solid]
+				child {
+					node {done}
+					edge from parent[solid]
+				}
+				child {
+					node {1001} edge from parent[dashed]
+					child {
+						node {0101} edge from parent[solid, snake]
+						child {
+							node {done} edge from parent[solid, snake]
+						}
+					}
+				}
+			}
+			child {
+				node {0001} edge from parent[dashed]
+				child {
+					node {1010} edge from parent[solid]
+					child {
+						node {0110} edge from parent[solid, snake]
+						child { 
+							node {done} edge from parent[solid,snake]
+						}
+					}
+				}
+				child {
+					node {1010} edge from parent[dashed]
+					child { 
+						node {1001} edge from parent[solid, snake] 
+						child {
+							node {0110} edge from parent[solid,snake] 
+							child { 
+								node {0101} edge from parent[solid,snake] 
+								child { 
+									node {done} edge from parent[solid,snake]
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+    };
+\end{tikzpicture}
+}
